@@ -1,0 +1,39 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="New Game Project"
+run/main_scene="uid://b3lbwjuajxfe5"
+config/features=PackedStringArray("4.5", "Mobile")
+config/icon="res://icon.svg"
+
+[autoload]
+
+AudioManager="*res://scripts/autoload/audio_manager.gd"
+EventBus="*res://scripts/autoload/event_bus.gd"
+GameManager="*res://scripts/autoload/game_manager.gd"
+SaveManager="*res://scripts/autoload/save_manager.gd"
+
+[display]
+
+window/size/viewport_width=320
+window/size/viewport_height=180
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+
+[dotnet]
+
+project/assembly_name="New Game Project"
+
+[rendering]
+
+renderer/rendering_method="mobile"

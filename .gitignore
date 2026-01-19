@@ -1,0 +1,44 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot-specific ignores
+*.translation
+
+# Imported textures and samples
+.import/
+
+# Build exports
+/build/
+/export/
+*.pck
+*.exe
+*.dmg
+*.app
+*.apk
+*.aab
+
+# Mono-specific ignores
+.mono/
+data_*/
+mono_crash.*.json
+
+# IDE and editor
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+*.code-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Keep files for empty directories
+!.gdkeep
