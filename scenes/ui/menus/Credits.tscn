@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3 uid="uid://jq64whno170s"]
+
+[ext_resource type="FontFile" uid="uid://b31uxfpf2sdlb" path="res://assets/fonts/Micro5-Regular.ttf" id="1_font"]
+[ext_resource type="Texture2D" uid="uid://dscs5q5qeky2s" path="res://assets/sprites/backgrounds/main-menu.jpg" id="2_rlr7t"]
+[ext_resource type="Script" uid="uid://cn4rldpcn5upi" path="res://scripts/ui/credits.gd" id="2_script"]
+
+[node name="Credits" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_rlr7t")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -60.0
+offset_right = 80.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 16
+text = "CREDITS"
+horizontal_alignment = 1
+
+[node name="CreditsText" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "Developer: Tristan Adams-Hall
+Art: Placeholder
+Music: Placeholder"
+horizontal_alignment = 1
+
+[node name="EngineText" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 6
+text = "Made with Godot"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "Back"
+
+[connection signal="pressed" from="VBoxContainer/BackButton" to="." method="_on_back_pressed"]
