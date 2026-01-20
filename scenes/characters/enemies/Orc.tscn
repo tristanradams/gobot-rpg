@@ -1,8 +1,9 @@
-[gd_scene load_steps=40 format=3 uid="uid://crqiensnpp7ku"]
+[gd_scene load_steps=41 format=3 uid="uid://crqiensnpp7ku"]
 
-[ext_resource type="Script" uid="uid://dn5vlkm336l47" path="res://scripts/characters/enemies/orc_controller.gd" id="1_wtkkb"]
+[ext_resource type="Script" path="res://scripts/characters/enemies/OrcController.cs" id="1_wtkkb"]
 [ext_resource type="Texture2D" uid="uid://dxenpnq62ta78" path="res://assets/sprites/enemies/Orc.png" id="2_m22oo"]
 [ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_m22oo"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/blade_swing_slice.wav" id="4_attack_sfx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8ypq5"]
 atlas = ExtResource("2_m22oo")
@@ -327,6 +328,7 @@ size = Vector2(17, 20)
 [node name="Orc" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 4
 script = ExtResource("1_wtkkb")
+AttackSfx = ExtResource("4_attack_sfx")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_618ek")

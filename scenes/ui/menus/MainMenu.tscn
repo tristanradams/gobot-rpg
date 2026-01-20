@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://csd7itmatmq06"]
+[gd_scene load_steps=5 format=3 uid="uid://csd7itmatmq06"]
 
-[ext_resource type="FontFile" uid="uid://b31uxfpf2sdlb" path="res://assets/fonts/Micro5-Regular.ttf" id="1_font"]
-[ext_resource type="Script" uid="uid://cg0fh8r6xotxi" path="res://scripts/ui/main_menu.gd" id="2_script"]
-[ext_resource type="Texture2D" uid="uid://dscs5q5qeky2s" path="res://assets/sprites/backgrounds/main-menu.jpg" id="3_bg"]
+[ext_resource type="Script" uid="uid://bfacvplysgcyk" path="res://scripts/ui/MainMenu.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dscs5q5qeky2s" path="res://assets/sprites/backgrounds/main-menu.jpg" id="2_bg"]
+[ext_resource type="AudioStream" uid="uid://bx88jlo3urikc" path="res://assets/audio/music/main_menu.mp3" id="3_music"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_title"]
 content_margin_left = 8.0
@@ -15,9 +15,6 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="Theme" id="Theme_785oh"]
-default_font = ExtResource("1_font")
-
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -25,7 +22,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_script")
+script = ExtResource("1_script")
+FadeDuration = 1.5
+BackgroundMusic = ExtResource("3_music")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -34,7 +33,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_bg")
+mouse_filter = 2
+texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
@@ -56,7 +56,6 @@ alignment = 1
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_title")
 text = "PLACEHOLDER TITLE"
@@ -64,16 +63,10 @@ horizontal_alignment = 1
 
 [node name="NewGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-theme = SubResource("Theme_785oh")
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 10
 text = "New Game"
 
 [node name="LoadGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-theme = SubResource("Theme_785oh")
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 10
 text = "Load Game"
 
 [node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
@@ -83,17 +76,13 @@ dragging_enabled = false
 
 [node name="CreditsButton" type="Button" parent="VBoxContainer/HSplitContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 10
 text = "Credits"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer/HSplitContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 10
 text = "Quit"
 
-[connection signal="pressed" from="VBoxContainer/NewGameButton" to="." method="_on_start_pressed"]
-[connection signal="pressed" from="VBoxContainer/LoadGameButton" to="." method="_on_load_pressed"]
-[connection signal="pressed" from="VBoxContainer/HSplitContainer/CreditsButton" to="." method="_on_credits_pressed"]
-[connection signal="pressed" from="VBoxContainer/HSplitContainer/QuitButton" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="VBoxContainer/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/LoadGameButton" to="." method="_on_load_game_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HSplitContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HSplitContainer/QuitButton" to="." method="_on_quit_button_pressed"]

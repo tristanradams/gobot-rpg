@@ -1,14 +1,15 @@
-[gd_scene load_steps=12 format=3 uid="uid://b3lbwjuajxfe5"]
+[gd_scene load_steps=13 format=3 uid="uid://b3lbwjuajxfe5"]
 
 [ext_resource type="PackedScene" uid="uid://bcpgc26qtcp0v" path="res://scenes/characters/player/Player.tscn" id="1_player"]
 [ext_resource type="AudioStream" uid="uid://cs4xe6htkgksv" path="res://assets/audio/music/game.mp3" id="2_bqfg8"]
 [ext_resource type="Texture2D" uid="uid://duxvuwtrddet" path="res://assets/sprites/backgrounds/Forest-0.png" id="2_i6wr6"]
 [ext_resource type="PackedScene" uid="uid://crqiensnpp7ku" path="res://scenes/characters/enemies/Orc.tscn" id="3_agac1"]
 [ext_resource type="Texture2D" uid="uid://wiv7g5qd15h8" path="res://assets/sprites/backgrounds/Forest-1.png" id="3_dexww"]
-[ext_resource type="Texture2D" uid="uid://comwah1v85nhu" path="res://assets/sprites/backgrounds/Forest-7a11.png" id="4_2imrs"]
-[ext_resource type="Texture2D" uid="uid://8ib7pv61de8c" path="res://assets/sprites/backgrounds/Forest-7e8e.png" id="5_e2wj5"]
+[ext_resource type="Texture2D" uid="uid://comwah1v85nhu" path="res://assets/sprites/backgrounds/Forest-2.png" id="4_2imrs"]
+[ext_resource type="Texture2D" uid="uid://8ib7pv61de8c" path="res://assets/sprites/backgrounds/Forest-3.png" id="5_e2wj5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menus/PauseMenu.tscn" id="6_pause"]
-[ext_resource type="PackedScene" path="res://scenes/ui/menus/DeathMenu.tscn" id="7_death"]
+[ext_resource type="PackedScene" uid="uid://c64o3vx5alcxs" path="res://scenes/ui/menus/DeathMenu.tscn" id="7_death"]
+[ext_resource type="Script" uid="uid://llw6c4u3mx4n" path="res://scripts/levels/Main.cs" id="main_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
 size = Vector2(511, 16)
@@ -17,11 +18,8 @@ size = Vector2(511, 16)
 size = Vector2(64, 8)
 
 [node name="Main" type="Node2D"]
-
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("2_bqfg8")
-volume_db = 10.0
-autoplay = true
+script = ExtResource("main_script")
+BackgroundMusic = ExtResource("2_bqfg8")
 
 [node name="Parallax2D Layer 0" type="Parallax2D" parent="."]
 scroll_scale = Vector2(0.4, 0.4)

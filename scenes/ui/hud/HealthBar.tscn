@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cder4cxoelenv"]
 
-[ext_resource type="Script" uid="uid://dcegatksaoicr" path="res://scripts/ui/health_bar.gd" id="1_j1iyw"]
+[ext_resource type="Script" path="res://scripts/ui/HealthBar.cs" id="1_j1iyw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1iyw"]
 content_margin_top = 0.0

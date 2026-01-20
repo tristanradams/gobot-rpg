@@ -10,17 +10,17 @@ config_version=5
 
 [application]
 
-config/name="New Game Project"
+config/name="RPG CSharp"
 run/main_scene="res://scenes/ui/menus/MainMenu.tscn"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
-AudioManager="*res://scripts/autoload/audio_manager.gd"
-EventBus="*res://scripts/autoload/event_bus.gd"
-GameManager="*res://scripts/autoload/game_manager.gd"
-SaveManager="*res://scripts/autoload/save_manager.gd"
+AudioManager="*res://scripts/autoload/AudioManager.cs"
+EventBus="*res://scripts/autoload/EventBus.cs"
+GameManager="*res://scripts/autoload/GameManager.cs"
+SaveManager="*res://scripts/autoload/SaveManager.cs"
 
 [display]
 
@@ -32,7 +32,11 @@ window/stretch/mode="canvas_items"
 
 [dotnet]
 
-project/assembly_name="New Game Project"
+project/assembly_name="RpgCSharp"
+
+[gui]
+
+theme/custom="res://resources/themes/game_theme.tres"
 
 [input]
 

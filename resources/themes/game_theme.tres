@@ -1,0 +1,72 @@
+[gd_resource type="Theme" load_steps=6 format=3]
+
+[ext_resource type="FontFile" uid="uid://b31uxfpf2sdlb" path="res://assets/fonts/Micro5-Regular.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxFlat" id="button_normal"]
+bg_color = Color(0.15, 0.15, 0.2, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="button_hover"]
+bg_color = Color(0.25, 0.25, 0.3, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="button_pressed"]
+bg_color = Color(0.1, 0.1, 0.15, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="panel_style"]
+bg_color = Color(0, 0, 0, 0.7)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 10
+
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.8, 0.8, 0.8, 1)
+Button/colors/font_disabled_color = Color(0.5, 0.5, 0.5, 1)
+Button/fonts/font = ExtResource("1_font")
+Button/font_sizes/font_size = 10
+Button/styles/normal = SubResource("button_normal")
+Button/styles/hover = SubResource("button_hover")
+Button/styles/pressed = SubResource("button_pressed")
+Button/styles/disabled = SubResource("button_normal")
+Button/styles/focus = SubResource("button_hover")
+
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/fonts/font = ExtResource("1_font")
+Label/font_sizes/font_size = 10
+
+Panel/styles/panel = SubResource("panel_style")
+
+VBoxContainer/constants/separation = 6
+HBoxContainer/constants/separation = 6
