@@ -5,6 +5,8 @@ extends CharacterBody2D
 const Anim = {
 	IDLE = "idle",
 	WALK = "walk",
+	JUMP = "jump",
+	FALL = "fall",
 	SWING_SWORD = "swing_sword",
 	PULSE_RED = "pulse_red",
 	DIE = "die",
@@ -13,9 +15,10 @@ const Anim = {
 # Stats
 @export var speed: float = 100.0
 @export var max_health: int = 100
+@export var gravity: float = 800.0
 
 # State
-enum State { IDLE, WALKING, ATTACKING, HURT, DEAD, CHASING }
+enum State { IDLE, WALKING, ATTACKING, HURT, DEAD, CHASING, JUMPING, FALLING }
 var _state: State = State.IDLE
 var _health: int = max_health
 

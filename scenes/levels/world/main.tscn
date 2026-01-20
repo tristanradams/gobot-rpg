@@ -1,29 +1,157 @@
-[gd_scene load_steps=3 format=3 uid="uid://b3lbwjuajxfe5"]
+[gd_scene load_steps=12 format=3 uid="uid://b3lbwjuajxfe5"]
 
-[ext_resource type="PackedScene" uid="uid://bcpgc26qtcp0v" path="res://scenes/characters/player/Player.tscn" id="1_otpq3"]
-[ext_resource type="PackedScene" uid="uid://crqiensnpp7ku" path="res://scenes/characters/enemies/Orc.tscn" id="2_bqfg8"]
+[ext_resource type="PackedScene" uid="uid://bcpgc26qtcp0v" path="res://scenes/characters/player/Player.tscn" id="1_player"]
+[ext_resource type="AudioStream" uid="uid://cs4xe6htkgksv" path="res://assets/audio/music/game.mp3" id="2_bqfg8"]
+[ext_resource type="Texture2D" uid="uid://duxvuwtrddet" path="res://assets/sprites/backgrounds/Forest-0.png" id="2_i6wr6"]
+[ext_resource type="PackedScene" uid="uid://crqiensnpp7ku" path="res://scenes/characters/enemies/Orc.tscn" id="3_agac1"]
+[ext_resource type="Texture2D" uid="uid://wiv7g5qd15h8" path="res://assets/sprites/backgrounds/Forest-1.png" id="3_dexww"]
+[ext_resource type="Texture2D" uid="uid://comwah1v85nhu" path="res://assets/sprites/backgrounds/Forest-7a11.png" id="4_2imrs"]
+[ext_resource type="Texture2D" uid="uid://8ib7pv61de8c" path="res://assets/sprites/backgrounds/Forest-7e8e.png" id="5_e2wj5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menus/PauseMenu.tscn" id="6_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menus/DeathMenu.tscn" id="7_death"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(511, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(64, 8)
 
 [node name="Main" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource("1_otpq3")]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_bqfg8")
+volume_db = 10.0
+autoplay = true
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_left = 43.0
-offset_top = 44.0
-offset_right = 66.0
-offset_bottom = 62.0
+[node name="Parallax2D Layer 0" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.4, 0.4)
+repeat_size = Vector2(300, 500)
+repeat_times = 2
 
-[node name="ColorRect2" type="ColorRect" parent="."]
-offset_left = 102.0
-offset_top = -9.0
-offset_right = 125.0
-offset_bottom = 9.0
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 0"]
+position = Vector2(357, 84)
+texture = ExtResource("2_i6wr6")
 
-[node name="ColorRect3" type="ColorRect" parent="."]
-offset_left = -57.0
-offset_top = 23.0
-offset_right = -34.0
-offset_bottom = 41.0
+[node name="Parallax2D Layer 1" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.5, 0.5)
+repeat_size = Vector2(300, 500)
+repeat_times = 2
 
-[node name="Orc" parent="." instance=ExtResource("2_bqfg8")]
-position = Vector2(47, 0)
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 1"]
+position = Vector2(357, 84)
+texture = ExtResource("3_dexww")
+
+[node name="Parallax2D Layer 2" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.6, 0.6)
+repeat_size = Vector2(300, 500)
+repeat_times = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 2"]
+position = Vector2(357, 84)
+texture = ExtResource("4_2imrs")
+
+[node name="Parallax2D Layer 3" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.75, 0.75)
+repeat_size = Vector2(300, 500)
+repeat_times = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 3"]
+position = Vector2(357, 84)
+texture = ExtResource("5_e2wj5")
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(167, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Ground"]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+
+[node name="Ground2" type="StaticBody2D" parent="."]
+position = Vector2(674, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground2"]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Ground2"]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Ground3" type="StaticBody2D" parent="."]
+position = Vector2(-181, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground3"]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Ground3"]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+
+[node name="Platform3" type="StaticBody2D" parent="."]
+position = Vector2(84, 64)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="PlatformSprite" type="ColorRect" parent="Platform3"]
+offset_left = -32.0
+offset_top = -4.0
+offset_right = 32.0
+offset_bottom = 107.0
+color = Color(0.61101425, 0.3106405, 0.4158188, 1)
+
+[node name="Platform1" type="StaticBody2D" parent="."]
+position = Vector2(116, 136)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1"]
+shape = SubResource("RectangleShape2D_platform")
+one_way_collision = true
+
+[node name="PlatformSprite" type="ColorRect" parent="Platform1"]
+offset_left = -32.0
+offset_top = -4.0
+offset_right = 32.0
+offset_bottom = 35.0
+color = Color(0.5, 0.4, 0.3, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="."]
+position = Vector2(199, 100)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="PlatformSprite" type="ColorRect" parent="Platform2"]
+offset_left = -32.0
+offset_top = -4.0
+offset_right = 32.0
+offset_bottom = 4.0
+color = Color(0.5, 0.4, 0.3, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Orc" parent="." instance=ExtResource("3_agac1")]
+position = Vector2(22, 154)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(83, 48)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="PauseMenu" parent="UILayer" instance=ExtResource("6_pause")]
+
+[node name="DeathMenu" parent="UILayer" instance=ExtResource("7_death")]

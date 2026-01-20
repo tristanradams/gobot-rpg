@@ -5,40 +5,59 @@ extends "res://scripts/characters/character.gd"
 @export var attack_damage: int = 25
 @export var attack_range: float = 50.0
 
+# Platformer physics
+@export var jump_velocity: float = -300.0
+
 
 func _character_ready() -> void:
-	speed = 200.0
+	speed = 120.0
 	max_health = 100
 	_health = max_health
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if _state == State.DEAD:
 		return
 
+	# Apply gravity
+	if not is_on_floor():
+		velocity.y += gravity * delta
+
+	# Handle jump
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = jump_velocity
+		_state = State.JUMPING
+
 	# Handle attack input
-	if Input.is_action_just_pressed("ui_accept") and _state != State.ATTACKING:
+	if Input.is_action_just_pressed("attack") and _state != State.ATTACKING and is_on_floor():
 		_attack()
-		return
 
-	# Skip movement during attack/hurt
-	if _state in [State.ATTACKING, State.HURT]:
-		velocity = Vector2.ZERO
-		move_and_slide()
-		return
+	# Horizontal movement (only left/right for side-scroller)
+	var direction := Input.get_axis("ui_left", "ui_right")
 
-	# Movement
-	var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	velocity = direction * speed
+	if _state != State.ATTACKING:
+		velocity.x = direction * speed
+
 	move_and_slide()
 
 	_update_sprite(direction)
 
 
-func _update_sprite(direction: Vector2) -> void:
-	update_sprite_direction(direction)
+func _update_sprite(direction: float) -> void:
+	if direction != 0:
+		sprite.flip_h = direction < 0
 
-	if direction == Vector2.ZERO:
+	# Airborne states take priority
+	if not is_on_floor():
+		if velocity.y < 0:
+			_state = State.JUMPING
+			sprite.play(Anim.JUMP)
+		else:
+			_state = State.FALLING
+			sprite.play(Anim.FALL)
+	elif _state == State.ATTACKING:
+		return  # Don't interrupt attack animation
+	elif direction == 0:
 		_state = State.IDLE
 		sprite.play(Anim.IDLE)
 	else:

@@ -5,6 +5,8 @@ extends "res://scripts/characters/character.gd"
 @export var damage: int = 10
 @export var detection_range: float = 150.0
 @export var attack_range: float = 30.0
+@export var jump_velocity: float = -280.0
+@export var jump_threshold: float = 20.0  # How far above player must be to trigger jump
 
 # References
 var _player: Node2D = null
@@ -17,43 +19,55 @@ func _character_ready() -> void:
 	_find_player()
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if _state == State.DEAD:
 		return
 
+	# Apply gravity
+	if not is_on_floor():
+		velocity.y += gravity * delta
+
 	if not _player:
 		_find_player()
-		return
-
-	# Skip movement during attack/hurt
-	if _state in [State.ATTACKING, State.HURT]:
-		velocity = Vector2.ZERO
 		move_and_slide()
 		return
 
-	var distance_to_player := global_position.distance_to(_player.global_position)
-	var direction_to_player := global_position.direction_to(_player.global_position)
-
-	# Attack if in range
-	if distance_to_player <= attack_range:
-		_attack()
+	# Skip horizontal movement during attack/hurt
+	if _state in [State.ATTACKING, State.HURT]:
+		velocity.x = 0
+		move_and_slide()
 		return
 
-	# Chase if player detected
+	var distance_to_player: float = global_position.distance_to(_player.global_position)
+	var direction_to_player: float = sign(_player.global_position.x - global_position.x)
+
+	# Attack if in range
+	if distance_to_player <= attack_range and is_on_floor():
+		_attack()
+		move_and_slide()
+		return
+
+	# Chase if player detected (horizontal only for side-scroller)
 	if distance_to_player <= detection_range:
 		_state = State.CHASING
-		velocity = direction_to_player * speed
+		velocity.x = direction_to_player * speed
 		_update_sprite(direction_to_player)
+
+		# Jump if player is above and orc is on floor
+		var player_above: float = global_position.y - _player.global_position.y
+		if player_above > jump_threshold and is_on_floor():
+			velocity.y = jump_velocity
 	else:
 		_state = State.IDLE
-		velocity = Vector2.ZERO
+		velocity.x = 0
 		sprite.play(Anim.IDLE)
 
 	move_and_slide()
 
 
-func _update_sprite(direction: Vector2) -> void:
-	update_sprite_direction(direction)
+func _update_sprite(direction: float) -> void:
+	if direction != 0:
+		sprite.flip_h = direction < 0
 
 	if _state == State.CHASING:
 		sprite.play(Anim.WALK)

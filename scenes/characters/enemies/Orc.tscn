@@ -202,7 +202,53 @@ animations = [{
 "texture": SubResource("AtlasTexture_4136q")
 }],
 "loop": true,
+"name": &"fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwuo4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bdvy2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sulvi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n6txl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_37oqv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4136q")
+}],
+"loop": true,
 "name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ypq5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k8kil")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_elgqd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qgo2h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqybe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxk66")
+}],
+"loop": false,
+"name": &"jump",
 "speed": 5.0
 }, {
 "frames": [{
@@ -243,7 +289,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"swing_sword",
-"speed": 5.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -279,11 +325,12 @@ animations = [{
 size = Vector2(17, 20)
 
 [node name="Orc" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 4
 script = ExtResource("1_wtkkb")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_618ek")
-animation = &"die"
+animation = &"swing_sword"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1.5, 0)
