@@ -1,10 +1,10 @@
 [gd_scene load_steps=51 format=3 uid="uid://bcpgc26qtcp0v"]
 
-[ext_resource type="Script" path="res://scripts/characters/player/PlayerController.cs" id="1_b7oxf"]
+[ext_resource type="Script" uid="uid://dyruwwixpd7er" path="res://scripts/characters/player/PlayerController.cs" id="1_b7oxf"]
 [ext_resource type="Texture2D" uid="uid://tyco2p71fyuh" path="res://assets/sprites/characters/Player.png" id="2_c12fh"]
 [ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_c12fh"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/blade_slash_short.wav" id="4_attack_sfx"]
-[ext_resource type="AudioStream" path="res://assets/audio/sfx/gore_splat.wav" id="5_hurt_sfx"]
+[ext_resource type="AudioStream" uid="uid://c0qtik163jcyy" path="res://assets/audio/sfx/blade_slash_short.wav" id="4_attack_sfx"]
+[ext_resource type="AudioStream" uid="uid://uhicgjavwhvf" path="res://assets/audio/sfx/gore_splat.wav" id="5_hurt_sfx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7xy7u"]
 atlas = ExtResource("2_c12fh")

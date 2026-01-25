@@ -1,4 +1,5 @@
 using Godot;
+using RpgCSharp.scripts.characters;
 
 namespace RpgCSharp.scripts.autoload;
 
@@ -8,11 +9,15 @@ public partial class SaveManager : Node
     private const string SaveExtension = ".save";
     private const string SettingsPath = "user://settings.cfg";
 
-    private Godot.Collections.Dictionary _currentSave = new();
+    private GameManager _gameManager;
+
+    // Pending data to apply when scene loads, keyed by SaveableId
+    private Godot.Collections.Dictionary<string, Godot.Collections.Dictionary> _pendingCharacterData = new();
 
     public override void _Ready()
     {
         EnsureSaveDirectory();
+        _gameManager = GetNode<GameManager>("/root/GameManager");
     }
 
     private void EnsureSaveDirectory()
@@ -23,6 +28,12 @@ public partial class SaveManager : Node
     public bool SaveGame(int slot = 0)
     {
         var saveData = GatherSaveData();
+        if (saveData == null)
+        {
+            GD.PushError("Failed to gather save data");
+            return false;
+        }
+
         var path = GetSavePath(slot);
 
         using var file = FileAccess.Open(path, FileAccess.ModeFlags.Write);
@@ -33,6 +44,7 @@ public partial class SaveManager : Node
         }
 
         file.StoreVar(saveData);
+        GD.Print($"Game saved to slot {slot}");
         return true;
     }
 
@@ -53,8 +65,9 @@ public partial class SaveManager : Node
             return false;
         }
 
-        _currentSave = (Godot.Collections.Dictionary)file.GetVar();
-        ApplySaveData(_currentSave);
+        var saveData = (Godot.Collections.Dictionary)file.GetVar();
+        ApplySaveData(saveData);
+        GD.Print($"Game loaded from slot {slot}");
         return true;
     }
 
@@ -78,21 +91,92 @@ public partial class SaveManager : Node
         return $"{SaveDir}slot_{slot}{SaveExtension}";
     }
 
-    protected virtual Godot.Collections.Dictionary GatherSaveData()
+    /// <summary>
+    /// Gets pending save data for a character by its SaveableId.
+    /// Returns null if no pending data exists.
+    /// </summary>
+    public Godot.Collections.Dictionary GetPendingData(string saveableId)
     {
+        return _pendingCharacterData.TryGetValue(saveableId, out var data) ? data : null;
+    }
+
+    /// <summary>
+    /// Removes pending data for a character after it's been applied.
+    /// </summary>
+    public void ClearPendingData(string saveableId)
+    {
+        _pendingCharacterData.Remove(saveableId);
+    }
+
+    /// <summary>
+    /// Clears all pending data (used when starting a new game).
+    /// </summary>
+    public void ClearAllPendingData()
+    {
+        _pendingCharacterData.Clear();
+    }
+
+    /// <summary>
+    /// Stores a character's death in pending data so it persists to the next save.
+    /// </summary>
+    public void RegisterCharacterData(string saveableId, Godot.Collections.Dictionary data)
+    {
+        _pendingCharacterData[saveableId] = data;
+    }
+
+    private Godot.Collections.Dictionary GatherSaveData()
+    {
+        // Start with any pending data (includes dead characters)
+        var characterData = new Godot.Collections.Dictionary<string, Godot.Collections.Dictionary>(_pendingCharacterData);
+
+        // Gather/update data from all live saveable characters
+        foreach (var node in GetTree().GetNodesInGroup("player"))
+        {
+            if (node is Character character && character.Saveable)
+            {
+                characterData[character.SaveableId] = character.GatherSaveData();
+            }
+        }
+
+        foreach (var node in GetTree().GetNodesInGroup("enemies"))
+        {
+            if (node is Character character && character.Saveable)
+            {
+                characterData[character.SaveableId] = character.GatherSaveData();
+            }
+        }
+
+        // Convert to array for storage
+        var characters = new Godot.Collections.Array<Godot.Collections.Dictionary>();
+        foreach (var data in characterData.Values)
+        {
+            characters.Add(data);
+        }
+
         return new Godot.Collections.Dictionary
         {
             { "timestamp", Time.GetUnixTimeFromSystem() },
-            { "player", new Godot.Collections.Dictionary() },
-            { "inventory", new Godot.Collections.Dictionary() },
-            { "quests", new Godot.Collections.Dictionary() },
-            { "world", new Godot.Collections.Dictionary() }
+            { "scene", GetTree().CurrentScene.SceneFilePath },
+            { "characters", characters }
         };
     }
 
-    protected virtual void ApplySaveData(Godot.Collections.Dictionary data)
+    private void ApplySaveData(Godot.Collections.Dictionary data)
     {
-        // Override in subclass to apply loaded data
+        // Store character data to apply after scene loads
+        _pendingCharacterData.Clear();
+
+        var characters = (Godot.Collections.Array)data["characters"];
+        foreach (var charData in characters)
+        {
+            var dict = (Godot.Collections.Dictionary)charData;
+            var id = (string)dict["id"];
+            _pendingCharacterData[id] = dict;
+        }
+
+        // Change to the saved scene
+        var scenePath = (string)data["scene"];
+        GetTree().ChangeSceneToFile(scenePath);
     }
 
     public bool SaveSettings(Godot.Collections.Dictionary settings)

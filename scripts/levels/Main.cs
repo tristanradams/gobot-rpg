@@ -9,8 +9,13 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
-		if (BackgroundMusic == null) return;
-		var audioManager = GetNode<AudioManager>("/root/AudioManager");
-		audioManager.PlayMusic(BackgroundMusic);
+		var gameManager = GetNode<GameManager>("/root/GameManager");
+		gameManager.StartGame();
+
+		if (BackgroundMusic != null)
+		{
+			var audioManager = GetNode<AudioManager>("/root/AudioManager");
+			audioManager.PlayMusic(BackgroundMusic);
+		}
 	}
 }

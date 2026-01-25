@@ -20,9 +20,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -50.0
-offset_top = -40.0
+offset_top = -58.0
 offset_right = 50.0
-offset_bottom = 40.0
+offset_bottom = 58.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -50,10 +50,21 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Resume"
 
+[node name="SaveButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Save Game"
+
+[node name="SaveStatus" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 6
+horizontal_alignment = 1
+
 [node name="ExitButton" type="Button" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Exit to Title"
 
-[connection signal="pressed" from="Panel/VBoxContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ResumeButton" to="." method="OnResumeButtonPressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/SaveButton" to="." method="OnSaveButtonPressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ExitButton" to="." method="OnExitButtonPressed"]

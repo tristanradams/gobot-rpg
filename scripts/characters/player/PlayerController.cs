@@ -1,152 +1,250 @@
 using Godot;
-using RpgCSharp.scripts.characters;
 using RpgCSharp.scripts.autoload;
 
 namespace RpgCSharp.scripts.characters.player;
 
 public partial class PlayerController : Character
 {
-    // Player-specific stats
-    [Export] public int AttackDamage { get; set; } = 25;
-    [Export] public float AttackRange { get; set; } = 50.0f;
+	// Player-specific stats
+	[Export] public int AttackDamage { get; set; } = 25;
+	[Export] public float AttackRange { get; set; } = 50.0f;
 
-    // Platformer physics
-    [Export] public float JumpVelocity { get; set; } = -300.0f;
+	// Platformer physics
+	[Export] public float JumpVelocity { get; set; } = -300.0f;
+	[Export] public float CoyoteTime { get; set; } = 0.12f;
+	[Export] public float JumpBufferTime { get; set; } = 0.12f;
+	[Export] public float MaxDropDistance { get; set; } = 100.0f;
 
-    // Sound effects
-    [Export] public AudioStream AttackSfx { get; set; }
-    [Export] public AudioStream HurtSfx { get; set; }
+	// Jump timing state
+	private float _coyoteTimer;
+	private float _jumpBufferTimer;
 
-    private AudioManager _audioManager;
+	// Drop-through state
+	private PhysicsBody2D _dropThroughPlatform;
+	private float _dropThroughTimer;
+	private const float DropThroughDuration = 0.25f;
 
-    protected override void CharacterReady()
-    {
-        Speed = 120.0f;
-        MaxHealth = 100;
-        _health = MaxHealth;
-        _audioManager = GetNode<AudioManager>("/root/AudioManager");
-    }
+	// Sound effects
+	[Export] public AudioStream AttackSfx { get; set; }
+	[Export] public AudioStream HurtSfx { get; set; }
 
-    public override void _PhysicsProcess(double delta)
-    {
-        if (_state == State.Dead) return;
+	private AudioManager _audioManager;
+	private GameManager _gameManager;
 
-        var velocity = Velocity;
+	protected override void CharacterReady()
+	{
+		Speed = 120.0f;
+		MaxHealth = 100;
+		Health = MaxHealth;
+		_audioManager = GetNode<AudioManager>("/root/AudioManager");
+		_gameManager = GetNode<GameManager>("/root/GameManager");
+		_gameManager.Player = this;
 
-        // Apply gravity
-        if (!IsOnFloor())
-        {
-            velocity.Y += Gravity * (float)delta;
-        }
+		ApplyPendingSaveData();
+	}
 
-        // Handle jump
-        if (Input.IsActionJustPressed("jump") && IsOnFloor())
-        {
-            velocity.Y = JumpVelocity;
-            _state = State.Jumping;
-        }
+	private void ApplyPendingSaveData()
+	{
+		var pendingData = _saveManager.GetPendingData(SaveableId);
+		if (pendingData == null) return;
 
-        // Handle attack input
-        if (Input.IsActionJustPressed("attack") && _state != State.Attacking && IsOnFloor())
-        {
-            Attack();
-        }
+		ApplySaveData(pendingData);
+		_saveManager.ClearPendingData(SaveableId);
+	}
 
-        // Horizontal movement (only left/right for side-scroller)
-        float direction = Input.GetAxis("ui_left", "ui_right");
+	public override void _PhysicsProcess(double delta)
+	{
+		if (_state == State.Dead) return;
 
-        if (_state != State.Attacking)
-        {
-            velocity.X = direction * Speed;
-        }
+		var velocity = Velocity;
+		var onFloor = IsOnFloor();
 
-        Velocity = velocity;
-        MoveAndSlide();
+		// Update coyote timer
+		if (onFloor)
+		{
+			_coyoteTimer = CoyoteTime;
+		}
+		else
+		{
+			_coyoteTimer -= (float)delta;
+		}
 
-        UpdateSprite(direction);
-    }
+		// Update jump buffer timer
+		if (Input.IsActionJustPressed("jump"))
+		{
+			_jumpBufferTimer = JumpBufferTime;
+		}
+		else
+		{
+			_jumpBufferTimer -= (float)delta;
+		}
 
-    private void UpdateSprite(float direction)
-    {
-        if (direction != 0)
-        {
-            Sprite.FlipH = direction < 0;
-        }
+		// Apply gravity
+		if (!onFloor)
+		{
+			velocity.Y += Gravity * (float)delta;
+		}
 
-        // Airborne states take priority
-        if (!IsOnFloor())
-        {
-            if (Velocity.Y < 0)
-            {
-                _state = State.Jumping;
-                Sprite.Play(Anim.Jump);
-            }
-            else
-            {
-                _state = State.Falling;
-                Sprite.Play(Anim.Fall);
-            }
-        }
-        else if (_state == State.Attacking)
-        {
-            return; // Don't interrupt attack animation
-        }
-        else if (direction == 0)
-        {
-            _state = State.Idle;
-            Sprite.Play(Anim.Idle);
-        }
-        else
-        {
-            _state = State.Walking;
-            Sprite.Play(Anim.Walk);
-        }
-    }
+		// Handle jump with coyote time and jump buffer
+		var canCoyoteJump = _coyoteTimer > 0.0f;
+		var hasBufferedJump = _jumpBufferTimer > 0.0f;
+		var pressingDown = Input.IsActionPressed("ui_down");
 
-    private void Attack()
-    {
-        _state = State.Attacking;
-        Sprite.Play(Anim.SwingSword);
-        if (AttackSfx != null) _audioManager.PlaySfx(AttackSfx);
-    }
+		// Drop-through platform (down + jump while on floor)
+		if (hasBufferedJump && onFloor && pressingDown)
+		{
+			if (TryDropThrough())
+			{
+				_jumpBufferTimer = 0.0f;
+			}
+		}
+		else if (hasBufferedJump && canCoyoteJump)
+		{
+			velocity.Y = JumpVelocity;
+			_state = State.Jumping;
+			_coyoteTimer = 0.0f;
+			_jumpBufferTimer = 0.0f;
+		}
 
-    protected override void OnHealthChanged()
-    {
-        _eventBus.EmitSignal(EventBus.SignalName.PlayerHealthChanged, _health, MaxHealth);
-    }
+		// Update drop-through timer and restore collision
+		UpdateDropThrough((float)delta);
 
-    protected override void OnDamageTaken(int amount)
-    {
-        if (HurtSfx != null) _audioManager.PlaySfx(HurtSfx);
-    }
+		// Handle attack input
+		if (Input.IsActionJustPressed("attack") && _state != State.Attacking && IsOnFloor())
+		{
+			Attack();
+		}
 
-    protected override void OnDied()
-    {
-        _eventBus.EmitSignal(EventBus.SignalName.PlayerDied);
-    }
+		// Horizontal movement (only left/right for side-scroller)
+		var direction = Input.GetAxis("ui_left", "ui_right");
 
-    protected override void OnAttackFinished()
-    {
-        TryHitEnemies();
-    }
+		if (_state != State.Attacking)
+		{
+			velocity.X = direction * Speed;
+		}
 
-    private void TryHitEnemies()
-    {
-        var enemies = GetTree().GetNodesInGroup("enemies");
+		Velocity = velocity;
+		MoveAndSlide();
 
-        foreach (var enemy in enemies)
-        {
-            if (enemy is Node2D enemyNode)
-            {
-                float distance = GlobalPosition.DistanceTo(enemyNode.GlobalPosition);
-                if (distance <= AttackRange)
-                {
-                    if (enemy.HasMethod("TakeDamage"))
-                    {
-                        enemy.Call("TakeDamage", AttackDamage);
-                    }
-                }
-            }
-        }
-    }
+		UpdateSprite(direction);
+	}
+
+	private void UpdateSprite(float direction)
+	{
+		if (direction != 0)
+		{
+			Sprite.FlipH = direction < 0;
+		}
+
+		// Airborne states take priority
+		if (!IsOnFloor())
+		{
+			if (Velocity.Y < 0)
+			{
+				_state = State.Jumping;
+				Sprite.Play(Anim.Jump);
+			}
+			else
+			{
+				_state = State.Falling;
+				Sprite.Play(Anim.Fall);
+			}
+		}
+		else if (_state == State.Attacking)
+		{
+			return; // Don't interrupt attack animation
+		}
+		else if (direction == 0)
+		{
+			_state = State.Idle;
+			Sprite.Play(Anim.Idle);
+		}
+		else
+		{
+			_state = State.Walking;
+			Sprite.Play(Anim.Walk);
+		}
+	}
+
+	private void Attack()
+	{
+		_state = State.Attacking;
+		Sprite.Play(Anim.SwingSword);
+		if (AttackSfx != null) _audioManager.PlaySfx(AttackSfx);
+	}
+
+	protected override void OnHealthChanged()
+	{
+		_eventBus.EmitSignal(EventBus.SignalName.PlayerHealthChanged, Health, MaxHealth);
+	}
+
+	protected override void OnDamageTaken(int amount)
+	{
+		if (HurtSfx != null) _audioManager.PlaySfx(HurtSfx);
+	}
+
+	protected override void OnDied()
+	{
+		_eventBus.EmitSignal(EventBus.SignalName.PlayerDied);
+	}
+
+	protected override void OnAttackFinished()
+	{
+		TryHitEnemies();
+	}
+
+	private void TryHitEnemies()
+	{
+		var enemies = GetTree().GetNodesInGroup("enemies");
+
+		foreach (var enemy in enemies)
+		{
+			if (enemy is not Node2D enemyNode) continue;
+			var distance = GlobalPosition.DistanceTo(enemyNode.GlobalPosition);
+			if (distance > AttackRange) continue;
+			if (enemy.HasMethod("TakeDamage"))
+			{
+				enemy.Call("TakeDamage", AttackDamage);
+			}
+		}
+	}
+
+	private bool TryDropThrough()
+	{
+		// Get the platform we're standing on
+		var floorCollision = GetLastSlideCollision();
+
+		if (floorCollision?.GetCollider() is not PhysicsBody2D platform)
+			return false;
+
+		// Check if there's a floor below within MaxDropDistance
+		var spaceState = GetWorld2D().DirectSpaceState;
+		var query = PhysicsRayQueryParameters2D.Create(
+			GlobalPosition,
+			GlobalPosition + new Vector2(0, MaxDropDistance),
+			CollisionMask,
+			[GetRid(), platform.GetRid()]
+		);
+		var result = spaceState.IntersectRay(query);
+
+		if (result.Count == 0)
+			return false; // No platform below within range
+
+		// Start drop-through
+		_dropThroughPlatform = platform;
+		_dropThroughTimer = DropThroughDuration;
+		AddCollisionExceptionWith(platform);
+		return true;
+	}
+
+	private void UpdateDropThrough(float delta)
+	{
+		if (_dropThroughPlatform == null) return;
+
+		_dropThroughTimer -= delta;
+
+		if (_dropThroughTimer > 0.0f) return;
+		RemoveCollisionExceptionWith(_dropThroughPlatform);
+		_dropThroughPlatform = null;
+	}
 }

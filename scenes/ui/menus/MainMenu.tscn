@@ -82,7 +82,7 @@ text = "Credits"
 layout_mode = 2
 text = "Quit"
 
-[connection signal="pressed" from="VBoxContainer/NewGameButton" to="." method="_on_new_game_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/LoadGameButton" to="." method="_on_load_game_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/HSplitContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/HSplitContainer/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/NewGameButton" to="." method="OnNewGameButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/LoadGameButton" to="." method="OnLoadGameButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HSplitContainer/CreditsButton" to="." method="OnCreditsButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HSplitContainer/QuitButton" to="." method="OnQuitButtonPressed"]

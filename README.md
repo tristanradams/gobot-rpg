@@ -1,6 +1,6 @@
 # RPG Game
 
-A 2D RPG game built with Godot 4.5.
+A 2D RPG game built with Godot 4.5 and C#.
 
 ## Project Structure
 
@@ -33,7 +33,7 @@ A 2D RPG game built with Godot 4.5.
 │   ├── items/                 # Pickup and equipment scenes
 │   └── effects/               # Particle and visual effect scenes
 │
-├── scripts/                    # All .gd GDScript files
+├── scripts/                    # All C# .cs files
 │   ├── characters/
 │   │   ├── player/            # Player logic
 │   │   ├── npcs/              # NPC behavior and AI
@@ -71,7 +71,7 @@ All `.tscn` scene files. Each scene represents a reusable node tree. Scenes are 
 - **effects/**: Visual effects like particles
 
 ### `scripts/`
-All GDScript `.gd` files. Scripts are organized to match their corresponding scenes where applicable.
+All C# `.cs` files. Scripts are organized to match their corresponding scenes where applicable.
 
 - **autoload/**: Scripts registered as singletons in Project Settings. These are globally accessible (e.g., `GameManager`, `AudioManager`, `EventBus`).
 - **systems/**: Core game mechanics that don't attach directly to a single scene (inventory logic, combat calculations, save/load).
@@ -87,74 +87,113 @@ Third-party plugins from the Godot Asset Library or custom tooling.
 
 ### Naming
 - **Scenes**: `PascalCase.tscn` (e.g., `Player.tscn`, `MainMenu.tscn`)
-- **Scripts**: `snake_case.gd` (e.g., `player_controller.gd`, `inventory_system.gd`)
+- **Scripts**: `PascalCase.cs` (e.g., `PlayerController.cs`, `InventorySystem.cs`)
 - **Resources**: `snake_case.tres` (e.g., `iron_sword.tres`, `quest_dragon_slayer.tres`)
 - **Assets**: `snake_case` with descriptive names (e.g., `player_idle.png`, `battle_theme.ogg`)
 
 ### Script Organization
 Each script should follow this structure:
-```gdscript
-class_name ClassName
-extends ParentClass
+```csharp
+using Godot;
 
-# Signals
-signal health_changed(new_health)
+namespace RpgCSharp.scripts.characters;
 
-# Enums
-enum State { IDLE, WALKING, RUNNING }
+public partial class Character : CharacterBody2D
+{
+    // Constants
+    public static class Anim
+    {
+        public const string Idle = "idle";
+        public const string Walk = "walk";
+    }
 
-# Constants
-const MAX_SPEED := 200.0
+    // Enums
+    public enum State { Idle, Walking, Running }
 
-# Exports (inspector variables)
-@export var speed: float = 100.0
+    // Exports (inspector variables)
+    [Export] public float Speed { get; set; } = 100.0f;
 
-# Public variables
-var health: int = 100
+    // Signals
+    [Signal] public delegate void HealthChangedEventHandler(int newHealth);
 
-# Private variables (prefix with _)
-var _internal_state: State = State.IDLE
+    // Protected/private fields
+    protected State _state = State.Idle;
+    private int _health = 100;
 
-# Onready variables
-@onready var sprite: Sprite2D = $Sprite2D
+    // Node references
+    protected AnimatedSprite2D Sprite;
 
-# Built-in callbacks
-func _ready() -> void:
-    pass
+    // Built-in callbacks
+    public override void _Ready()
+    {
+        Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+    }
 
-func _process(delta: float) -> void:
-    pass
+    public override void _PhysicsProcess(double delta)
+    {
+    }
 
-# Public methods
-func take_damage(amount: int) -> void:
-    pass
+    // Public methods
+    public void TakeDamage(int amount)
+    {
+    }
 
-# Private methods
-func _update_state() -> void:
-    pass
+    // Private methods
+    private void UpdateState()
+    {
+    }
+}
 ```
 
 ## Autoload Singletons
 
-Register these in **Project > Project Settings > Autoload**:
+Registered in **Project > Project Settings > Autoload**:
 
 | Name | Path | Purpose |
 |------|------|---------|
-| `GameManager` | `scripts/autoload/game_manager.gd` | Global game state |
-| `EventBus` | `scripts/autoload/event_bus.gd` | Global signal hub |
-| `AudioManager` | `scripts/autoload/audio_manager.gd` | Audio playback |
-| `SaveManager` | `scripts/autoload/save_manager.gd` | Save/load handling |
+| `GameManager` | `scripts/autoload/GameManager.cs` | Global game state, pause/resume |
+| `EventBus` | `scripts/autoload/EventBus.cs` | Global signal hub |
+| `AudioManager` | `scripts/autoload/AudioManager.cs` | Music and SFX playback |
+| `SaveManager` | `scripts/autoload/SaveManager.cs` | Save/load handling |
+
+## Features
+
+### Save System
+Characters implement a saveable interface via the `Character` base class:
+- `SaveableId`: Unique identifier (auto-generated from scene path + node path)
+- `GatherSaveData()`: Collects position, health, death state
+- `ApplySaveData()`: Restores state on load
+
+### Game State Management
+`GameManager` tracks game state (`Menu`, `Playing`, `Paused`, `Dialogue`, `Cutscene`) and provides:
+- `StartGame()`, `PauseGame()`, `ResumeGame()`, `ReturnToMenu()`
+- Player reference for global access
+
+### Platformer Physics
+Player includes:
+- Coyote time (jump grace period after leaving ground)
+- Jump buffering (queue jump input before landing)
+- Drop-through platforms (down + jump)
 
 ## Getting Started
 
-1. Open the project in Godot 4.5+
-2. Create your main scene in `scenes/levels/`
-3. Set it as the main scene in Project Settings
-4. Build your player in `scenes/characters/player/`
-5. Create autoload singletons as needed
+1. Open the project in Godot 4.5+ with .NET support
+2. Build the C# solution
+3. Run the main scene (`scenes/ui/menus/MainMenu.tscn`)
 
 ## Resources
 
 - [Godot Documentation](https://docs.godotengine.org/)
-- [GDScript Reference](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html)
+- [C# in Godot](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/index.html)
 - [Best Practices](https://docs.godotengine.org/en/stable/tutorials/best_practices/index.html)
+
+## TODOs
+
+- block ability
+- dash ability
+- double jump ability
+- save / rest destinations
+- respawn all enemies on save
+- floating familiar
+  - unlocks chests & doors (possibly through equippable item)
+  - fires projectiles (possibly through equippable item)

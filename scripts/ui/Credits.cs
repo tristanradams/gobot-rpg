@@ -4,7 +4,7 @@ namespace RpgCSharp.scripts.ui;
 
 public partial class Credits : Control
 {
-    private void _on_back_button_pressed()
+    private void OnBackButtonPressed()
     {
         GetTree().ChangeSceneToFile("res://scenes/ui/menus/MainMenu.tscn");
     }

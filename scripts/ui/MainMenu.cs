@@ -5,14 +5,21 @@ namespace RpgCSharp.scripts.ui;
 
 public partial class MainMenu : Control
 {
-	[Export] public float FadeDuration { get; set; } = 2.0f;
+	[Export] public float FadeDuration { get; set; } = 1.5f;
 	[Export] public AudioStream BackgroundMusic { get; set; }
 
 	private VBoxContainer _content;
+	private Button _loadGameButton;
+	private SaveManager _saveManager;
 
 	public override void _Ready()
 	{
 		_content = GetNode<VBoxContainer>("VBoxContainer");
+		_loadGameButton = GetNode<Button>("VBoxContainer/LoadGameButton");
+		_saveManager = GetNode<SaveManager>("/root/SaveManager");
+
+		// Disable load button if no save exists
+		_loadGameButton.Disabled = !_saveManager.HasSave();
 
 		// Start content fully transparent (background stays visible)
 		_content.Modulate = new Color(_content.Modulate, 0.0f);
@@ -29,22 +36,23 @@ public partial class MainMenu : Control
 		}
 	}
 
-	private void _on_new_game_button_pressed()
+	private void OnNewGameButtonPressed()
 	{
+		_saveManager.ClearAllPendingData();
 		GetTree().ChangeSceneToFile("res://scenes/levels/world/main.tscn");
 	}
 
-	private void _on_load_game_button_pressed()
+	private void OnLoadGameButtonPressed()
 	{
-		GetTree().ChangeSceneToFile("res://scenes/levels/world/main.tscn");
+		_saveManager.LoadGame();
 	}
 
-	private void _on_credits_button_pressed()
+	private void OnCreditsButtonPressed()
 	{
 		GetTree().ChangeSceneToFile("res://scenes/ui/menus/Credits.tscn");
 	}
 
-	private void _on_quit_button_pressed()
+	private void OnQuitButtonPressed()
 	{
 		GetTree().Quit();
 	}

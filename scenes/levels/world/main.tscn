@@ -21,64 +21,54 @@ size = Vector2(64, 8)
 script = ExtResource("main_script")
 BackgroundMusic = ExtResource("2_bqfg8")
 
-[node name="Parallax2D Layer 0" type="Parallax2D" parent="."]
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Parallax2D Layer 0" type="Parallax2D" parent="Background"]
 scroll_scale = Vector2(0.4, 0.4)
-repeat_size = Vector2(300, 500)
+repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 0"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 0"]
 position = Vector2(357, 84)
 texture = ExtResource("2_i6wr6")
 
-[node name="Parallax2D Layer 1" type="Parallax2D" parent="."]
+[node name="Parallax2D Layer 1" type="Parallax2D" parent="Background"]
 scroll_scale = Vector2(0.5, 0.5)
-repeat_size = Vector2(300, 500)
+repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 1"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 1"]
 position = Vector2(357, 84)
 texture = ExtResource("3_dexww")
 
-[node name="Parallax2D Layer 2" type="Parallax2D" parent="."]
+[node name="Parallax2D Layer 2" type="Parallax2D" parent="Background"]
 scroll_scale = Vector2(0.6, 0.6)
-repeat_size = Vector2(300, 500)
+repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 2"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 2"]
 position = Vector2(357, 84)
 texture = ExtResource("4_2imrs")
 
-[node name="Parallax2D Layer 3" type="Parallax2D" parent="."]
+[node name="Parallax2D Layer 3" type="Parallax2D" parent="Background"]
 scroll_scale = Vector2(0.75, 0.75)
-repeat_size = Vector2(300, 500)
+repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Parallax2D Layer 3"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 3"]
 position = Vector2(357, 84)
 texture = ExtResource("5_e2wj5")
 
-[node name="Ground" type="StaticBody2D" parent="."]
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Ground1" type="StaticBody2D" parent="Platforms"]
 position = Vector2(167, 179)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground1"]
 position = Vector2(95.5, 0)
 shape = SubResource("RectangleShape2D_ground")
 
-[node name="GroundSprite" type="ColorRect" parent="Ground"]
-offset_left = -160.0
-offset_top = -8.0
-offset_right = 351.0
-offset_bottom = 8.0
-color = Color(0.4, 0.3, 0.2, 1)
-
-[node name="Ground2" type="StaticBody2D" parent="."]
-position = Vector2(674, 179)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground2"]
-position = Vector2(95.5, 0)
-shape = SubResource("RectangleShape2D_ground")
-
-[node name="GroundSprite" type="ColorRect" parent="Ground2"]
+[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground1"]
 offset_left = -160.0
 offset_top = -8.0
 offset_right = 351.0
@@ -86,55 +76,71 @@ offset_bottom = 8.0
 color = Color(0.4, 0.3, 0.2, 1)
 metadata/_edit_use_anchors_ = true
 
-[node name="Ground3" type="StaticBody2D" parent="."]
-position = Vector2(-181, 179)
+[node name="Ground2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(674, 179)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground3"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground2"]
 position = Vector2(95.5, 0)
 shape = SubResource("RectangleShape2D_ground")
 
-[node name="GroundSprite" type="ColorRect" parent="Ground3"]
+[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground2"]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Ground3" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-181, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground3"]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground3"]
 offset_left = -160.0
 offset_top = -8.0
 offset_right = 351.0
 offset_bottom = 8.0
 color = Color(0.4, 0.3, 0.2, 1)
 
-[node name="Platform3" type="StaticBody2D" parent="."]
+[node name="Platform1" type="StaticBody2D" parent="Platforms"]
 position = Vector2(84, 64)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform3"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform1"]
 shape = SubResource("RectangleShape2D_platform")
 
-[node name="PlatformSprite" type="ColorRect" parent="Platform3"]
+[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform1"]
 offset_left = -32.0
 offset_top = -4.0
 offset_right = 32.0
 offset_bottom = 107.0
 color = Color(0.61101425, 0.3106405, 0.4158188, 1)
+metadata/_edit_use_anchors_ = true
 
-[node name="Platform1" type="StaticBody2D" parent="."]
+[node name="Platform2" type="StaticBody2D" parent="Platforms"]
 position = Vector2(116, 136)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2"]
 shape = SubResource("RectangleShape2D_platform")
 one_way_collision = true
 
-[node name="PlatformSprite" type="ColorRect" parent="Platform1"]
+[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform2"]
 offset_left = -32.0
 offset_top = -4.0
 offset_right = 32.0
 offset_bottom = 35.0
 color = Color(0.5, 0.4, 0.3, 1)
+metadata/_edit_use_anchors_ = true
 
-[node name="Platform2" type="StaticBody2D" parent="."]
+[node name="Platform3" type="StaticBody2D" parent="Platforms"]
 position = Vector2(199, 100)
-metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform3"]
 shape = SubResource("RectangleShape2D_platform")
 
-[node name="PlatformSprite" type="ColorRect" parent="Platform2"]
+[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform3"]
 offset_left = -32.0
 offset_top = -4.0
 offset_right = 32.0
@@ -142,14 +148,16 @@ offset_bottom = 4.0
 color = Color(0.5, 0.4, 0.3, 1)
 metadata/_edit_use_anchors_ = true
 
-[node name="Orc" parent="." instance=ExtResource("3_agac1")]
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Orc" parent="Enemies" instance=ExtResource("3_agac1")]
 position = Vector2(22, 154)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(83, 48)
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="Menus" type="CanvasLayer" parent="."]
 
-[node name="PauseMenu" parent="UILayer" instance=ExtResource("6_pause")]
+[node name="PauseMenu" parent="Menus" instance=ExtResource("6_pause")]
 
-[node name="DeathMenu" parent="UILayer" instance=ExtResource("7_death")]
+[node name="DeathMenu" parent="Menus" instance=ExtResource("7_death")]

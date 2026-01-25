@@ -15,7 +15,7 @@ public partial class HealthBar : ProgressBar
         FillMode = (int)FillModeEnum.BeginToEnd;
     }
 
-    public void update_health(int current, int maximum)
+    public void UpdateHealth(int current, int maximum)
     {
         MaxValue = maximum;
         Value = current;

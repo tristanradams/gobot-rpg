@@ -35,20 +35,16 @@ public partial class GameManager : Node
 
     public void PauseGame()
     {
-        if (CurrentState == GameState.Playing)
-        {
-            ChangeState(GameState.Paused);
-            GetTree().Paused = true;
-        }
+        if (CurrentState != GameState.Playing) return;
+        ChangeState(GameState.Paused);
+        GetTree().Paused = true;
     }
 
     public void ResumeGame()
     {
-        if (CurrentState == GameState.Paused)
-        {
-            ChangeState(GameState.Playing);
-            GetTree().Paused = false;
-        }
+        if (CurrentState != GameState.Paused) return;
+        ChangeState(GameState.Playing);
+        GetTree().Paused = false;
     }
 
     public void StartGame()

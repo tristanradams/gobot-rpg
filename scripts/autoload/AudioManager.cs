@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace RpgCSharp.scripts.autoload;
@@ -72,15 +73,12 @@ public partial class AudioManager : Node
 
     public void PlaySfx(AudioStream stream, float volumeDb = 0.0f)
     {
-        foreach (var player in _sfxPlayers)
+        foreach (var player in _sfxPlayers.Where(player => !player.Playing))
         {
-            if (!player.Playing)
-            {
-                player.Stream = stream;
-                player.VolumeDb = volumeDb;
-                player.Play();
-                return;
-            }
+            player.Stream = stream;
+            player.VolumeDb = volumeDb;
+            player.Play();
+            return;
         }
 
         // All players busy, use the first one
