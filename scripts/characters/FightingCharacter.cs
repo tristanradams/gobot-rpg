@@ -4,6 +4,18 @@ using Godot.Collections;
 
 namespace RpgCSharp.scripts.characters;
 
+public static class CommonFightingCharacterAnimation
+{
+    public const string Attack = "attack";
+    public const string Die = "die";
+}
+
+public static class CommonFightingSaveKey
+{
+    public const string Health = "health";
+    public const string IsDead = "is_dead";
+}
+
 public abstract partial class FightingCharacter : Character
 {
     protected State CurrentState = State.Idle;
@@ -146,9 +158,9 @@ public abstract partial class FightingCharacter : Character
     {
         if (Sprite == null) return;
 
-        var currentAnim = Sprite.Animation;
+        var currentAnim = Sprite.Animation.ToString();
 
-        if (AttackAnimations.Any(attackAnim => currentAnim == attackAnim))
+        if (AttackAnimations.Contains(currentAnim))
         {
             OnAttackFinished();
             CurrentState = State.Idle;
@@ -162,25 +174,24 @@ public abstract partial class FightingCharacter : Character
     public override Dictionary GatherSaveData()
     {
         var data = base.GatherSaveData();
-        data[CommonFightingSaveKeys.Health] = CurrentHealth;
-        data[CommonFightingSaveKeys.IsDead] = CurrentState == State.Dead;
+        data[CommonFightingSaveKey.Health] = CurrentHealth;
+        data[CommonFightingSaveKey.IsDead] = CurrentState == State.Dead;
         return data;
     }
 
     public override bool ApplySaveData(Dictionary data)
     {
-        if ((bool)data[CommonFightingSaveKeys.IsDead])
+        if ((bool)data[CommonFightingSaveKey.IsDead])
         {
             QueueFree();
             return false;
         }
 
         base.ApplySaveData(data);
-        CurrentHealth = (int)data[CommonFightingSaveKeys.Health];
+        CurrentHealth = (int)data[CommonFightingSaveKey.Health];
         OnHealthChanged();
         return true;
     }
-
 
     protected enum State
     {
@@ -193,19 +204,5 @@ public abstract partial class FightingCharacter : Character
         Chasing,
         Jumping,
         Falling
-    }
-
-    protected static class CommonFightingCharacterAnimation
-    {
-        public const string Jump = "jump";
-        public const string Attack = "attack";
-        public const string Defend = "defend";
-        public const string Die = "die";
-    }
-
-    protected static class CommonFightingSaveKeys
-    {
-        public const string Health = "health";
-        public const string IsDead = "is_dead";
     }
 }

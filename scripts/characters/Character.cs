@@ -5,6 +5,18 @@ using RpgCSharp.scripts.interfaces;
 
 namespace RpgCSharp.scripts.characters;
 
+public static class CommonCharacterAnimation
+{
+    public const string Idle = "idle";
+}
+
+public static class CommonCharacterSaveKey
+{
+    public const string Id = "id";
+    public const string PositionX = "position_x";
+    public const string PositionY = "position_y";
+}
+
 public abstract partial class Character : CharacterBody2D, IHasGlobals, ISavable
 {
     [Export] public string CharacterName { get; set; }
@@ -44,16 +56,16 @@ public abstract partial class Character : CharacterBody2D, IHasGlobals, ISavable
     {
         return new Dictionary
         {
-            { CommonCharacterSaveKeys.Id, SaveId },
-            { CommonCharacterSaveKeys.PositionX, GlobalPosition.X },
-            { CommonCharacterSaveKeys.PositionY, GlobalPosition.Y }
+            { CommonCharacterSaveKey.Id, SaveId },
+            { CommonCharacterSaveKey.PositionX, GlobalPosition.X },
+            { CommonCharacterSaveKey.PositionY, GlobalPosition.Y }
         };
     }
 
     public virtual bool ApplySaveData(Dictionary data)
     {
-        var posX = (float)data[CommonCharacterSaveKeys.PositionX];
-        var posY = (float)data[CommonCharacterSaveKeys.PositionY];
+        var posX = (float)data[CommonCharacterSaveKey.PositionX];
+        var posY = (float)data[CommonCharacterSaveKey.PositionY];
         GlobalPosition = new Vector2(posX, posY);
         return true;
     }
@@ -70,19 +82,5 @@ public abstract partial class Character : CharacterBody2D, IHasGlobals, ISavable
 
     protected virtual void OnInitialized()
     {
-    }
-
-    protected static class CommonCharacterAnimation
-    {
-        public const string Idle = "idle";
-        public const string Walk = "walk";
-        public const string Run = "run";
-    }
-
-    protected static class CommonCharacterSaveKeys
-    {
-        public const string Id = "id";
-        public const string PositionX = "position_x";
-        public const string PositionY = "position_y";
     }
 }

@@ -2,6 +2,11 @@ using Godot;
 
 namespace RpgCSharp.scripts.characters.enemies;
 
+public static class FlyingEnemyAnimation
+{
+    public const string Fly = "fly";
+}
+
 public abstract partial class FlyingEnemy : Enemy
 {
     [Export] public float VerticalSpeed { get; set; } = 80.0f;

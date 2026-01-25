@@ -1,9 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://b3lbwjuajxfe5"]
+[gd_scene load_steps=13 format=3 uid="uid://b3lbwjuajxfe5"]
 
 [ext_resource type="PackedScene" uid="uid://bcpgc26qtcp0v" path="res://scenes/characters/player/Player.tscn" id="1_player"]
 [ext_resource type="AudioStream" uid="uid://cs4xe6htkgksv" path="res://assets/audio/music/game.mp3" id="2_bqfg8"]
 [ext_resource type="Texture2D" uid="uid://duxvuwtrddet" path="res://assets/sprites/backgrounds/Forest-0.png" id="2_i6wr6"]
-[ext_resource type="PackedScene" uid="uid://crqiensnpp7ku" path="res://scenes/characters/enemies/Orc.tscn" id="3_agac1"]
+[ext_resource type="PackedScene" uid="uid://crqiensnpp7ku" path="res://scenes/characters/enemies/JumpingOrc.tscn" id="3_agac1"]
 [ext_resource type="Texture2D" uid="uid://wiv7g5qd15h8" path="res://assets/sprites/backgrounds/Forest-1.png" id="3_dexww"]
 [ext_resource type="Texture2D" uid="uid://comwah1v85nhu" path="res://assets/sprites/backgrounds/Forest-2.png" id="4_2imrs"]
 [ext_resource type="Texture2D" uid="uid://8ib7pv61de8c" path="res://assets/sprites/backgrounds/Forest-3.png" id="5_e2wj5"]
@@ -12,12 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://bgqxj8ruq1uj8" path="res://scenes/characters/enemies/WalkingMushroom.tscn" id="8_s8dsv"]
 [ext_resource type="PackedScene" uid="uid://q2tcqgjwll0u" path="res://scenes/characters/enemies/FlyingMushroom.tscn" id="9_r76va"]
 [ext_resource type="Script" uid="uid://llw6c4u3mx4n" path="res://scripts/levels/Main.cs" id="main_script"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
-size = Vector2(511, 16)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
-size = Vector2(64, 8)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("main_script")
@@ -61,99 +55,10 @@ repeat_times = 2
 position = Vector2(357, 84)
 texture = ExtResource("5_e2wj5")
 
-[node name="Platforms" type="Node2D" parent="."]
-
-[node name="Ground1" type="StaticBody2D" parent="Platforms"]
-position = Vector2(167, 179)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground1"]
-position = Vector2(95.5, 0)
-shape = SubResource("RectangleShape2D_ground")
-
-[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground1"]
-offset_left = -160.0
-offset_top = -8.0
-offset_right = 351.0
-offset_bottom = 8.0
-color = Color(0.4, 0.3, 0.2, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Ground2" type="StaticBody2D" parent="Platforms"]
-position = Vector2(674, 179)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground2"]
-position = Vector2(95.5, 0)
-shape = SubResource("RectangleShape2D_ground")
-
-[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground2"]
-offset_left = -160.0
-offset_top = -8.0
-offset_right = 351.0
-offset_bottom = 8.0
-color = Color(0.4, 0.3, 0.2, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Ground3" type="StaticBody2D" parent="Platforms"]
-position = Vector2(-181, 179)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground3"]
-position = Vector2(95.5, 0)
-shape = SubResource("RectangleShape2D_ground")
-
-[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground3"]
-offset_left = -160.0
-offset_top = -8.0
-offset_right = 351.0
-offset_bottom = 8.0
-color = Color(0.4, 0.3, 0.2, 1)
-
-[node name="Platform1" type="StaticBody2D" parent="Platforms"]
-position = Vector2(84, 64)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform1"]
-shape = SubResource("RectangleShape2D_platform")
-
-[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform1"]
-offset_left = -32.0
-offset_top = -4.0
-offset_right = 32.0
-offset_bottom = 107.0
-color = Color(0.61101425, 0.3106405, 0.4158188, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Platform2" type="StaticBody2D" parent="Platforms"]
-position = Vector2(116, 136)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2"]
-shape = SubResource("RectangleShape2D_platform")
-one_way_collision = true
-
-[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform2"]
-offset_left = -32.0
-offset_top = -4.0
-offset_right = 32.0
-offset_bottom = 35.0
-color = Color(0.5, 0.4, 0.3, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="Platform3" type="StaticBody2D" parent="Platforms"]
-position = Vector2(199, 100)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform3"]
-shape = SubResource("RectangleShape2D_platform")
-
-[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform3"]
-offset_left = -32.0
-offset_top = -4.0
-offset_right = 32.0
-offset_bottom = 4.0
-color = Color(0.5, 0.4, 0.3, 1)
-metadata/_edit_use_anchors_ = true
-
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="Orc" parent="Enemies" instance=ExtResource("3_agac1")]
-position = Vector2(12, 161)
+[node name="JumpingOrc" parent="Enemies" instance=ExtResource("3_agac1")]
+position = Vector2(-1, 163)
 
 [node name="WalkingMushroom" parent="Enemies" instance=ExtResource("8_s8dsv")]
 position = Vector2(396, 137)
@@ -166,7 +71,6 @@ motion_mode = 1
 position = Vector2(87, 45)
 
 [node name="Menus" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="PauseMenu" parent="Menus" instance=ExtResource("6_pause")]
 

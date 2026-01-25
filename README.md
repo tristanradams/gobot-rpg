@@ -191,11 +191,11 @@ Player includes:
 
 - block ability
 - dash ability
+- double jump ability
 - npcs
   - dialog
   - quests?
   - fully stationary?
-- double jump ability
 - save / rest destinations
 - respawn all enemies on save
 - floating familiar

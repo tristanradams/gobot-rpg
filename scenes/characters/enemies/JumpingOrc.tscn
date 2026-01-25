@@ -1,6 +1,6 @@
 [gd_scene load_steps=37 format=3 uid="uid://crqiensnpp7ku"]
 
-[ext_resource type="Script" uid="uid://b27n1vl1qqp5e" path="res://scripts/characters/enemies/Player.cs" id="1_wtkkb"]
+[ext_resource type="Script" uid="uid://b27n1vl1qqp5e" path="res://scripts/characters/enemies/JumpingOrc.cs" id="1_wtkkb"]
 [ext_resource type="Texture2D" uid="uid://dxenpnq62ta78" path="res://assets/sprites/enemies/Orc.png" id="2_m22oo"]
 [ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_m22oo"]
 [ext_resource type="AudioStream" uid="uid://c30gn654uubus" path="res://assets/audio/sfx/blade_swing_slice.wav" id="4_attack_sfx"]
@@ -175,29 +175,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8ypq5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_k8kil")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_elgqd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qgo2h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_eqybe")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qxk66")
-}],
-"loop": false,
-"name": &"attack3",
-"speed": 10.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_yoe67")
 }, {
 "duration": 1.0,
@@ -290,19 +267,19 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5ajsn"]
-size = Vector2(17, 20)
+size = Vector2(17, 17)
 
-[node name="Orc" type="CharacterBody2D" groups=["enemies"]]
+[node name="CharacterBody2D" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 4
 script = ExtResource("1_wtkkb")
 AttackSfx = ExtResource("4_attack_sfx")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_618ek")
-animation = &"attack3"
+animation = &"jump"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(1.5, 0)
+position = Vector2(1.5, -1.5)
 shape = SubResource("RectangleShape2D_5ajsn")
 
 [node name="HealthBar" parent="." instance=ExtResource("3_m22oo")]
