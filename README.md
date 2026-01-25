@@ -87,7 +87,7 @@ Third-party plugins from the Godot Asset Library or custom tooling.
 
 ### Naming
 - **Scenes**: `PascalCase.tscn` (e.g., `Player.tscn`, `MainMenu.tscn`)
-- **Scripts**: `PascalCase.cs` (e.g., `PlayerController.cs`, `InventorySystem.cs`)
+- **Scripts**: `PascalCase.cs` (e.g., `Player.cs`, `InventorySystem.cs`)
 - **Resources**: `snake_case.tres` (e.g., `iron_sword.tres`, `quest_dragon_slayer.tres`)
 - **Assets**: `snake_case` with descriptive names (e.g., `player_idle.png`, `battle_theme.ogg`)
 

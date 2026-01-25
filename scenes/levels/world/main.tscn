@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b3lbwjuajxfe5"]
+[gd_scene load_steps=15 format=3 uid="uid://b3lbwjuajxfe5"]
 
 [ext_resource type="PackedScene" uid="uid://bcpgc26qtcp0v" path="res://scenes/characters/player/Player.tscn" id="1_player"]
 [ext_resource type="AudioStream" uid="uid://cs4xe6htkgksv" path="res://assets/audio/music/game.mp3" id="2_bqfg8"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://8ib7pv61de8c" path="res://assets/sprites/backgrounds/Forest-3.png" id="5_e2wj5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menus/PauseMenu.tscn" id="6_pause"]
 [ext_resource type="PackedScene" uid="uid://c64o3vx5alcxs" path="res://scenes/ui/menus/DeathMenu.tscn" id="7_death"]
+[ext_resource type="PackedScene" uid="uid://bgqxj8ruq1uj8" path="res://scenes/characters/enemies/WalkingMushroom.tscn" id="8_s8dsv"]
+[ext_resource type="PackedScene" uid="uid://q2tcqgjwll0u" path="res://scenes/characters/enemies/FlyingMushroom.tscn" id="9_r76va"]
 [ext_resource type="Script" uid="uid://llw6c4u3mx4n" path="res://scripts/levels/Main.cs" id="main_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
@@ -151,12 +153,20 @@ metadata/_edit_use_anchors_ = true
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Orc" parent="Enemies" instance=ExtResource("3_agac1")]
-position = Vector2(22, 154)
+position = Vector2(12, 161)
+
+[node name="WalkingMushroom" parent="Enemies" instance=ExtResource("8_s8dsv")]
+position = Vector2(396, 137)
+
+[node name="FlyingMushroom" parent="Enemies" instance=ExtResource("9_r76va")]
+position = Vector2(369, 39)
+motion_mode = 1
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(83, 48)
+position = Vector2(87, 45)
 
 [node name="Menus" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="PauseMenu" parent="Menus" instance=ExtResource("6_pause")]
 

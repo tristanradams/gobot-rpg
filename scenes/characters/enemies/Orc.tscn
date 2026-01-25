@@ -1,6 +1,6 @@
 [gd_scene load_steps=37 format=3 uid="uid://crqiensnpp7ku"]
 
-[ext_resource type="Script" uid="uid://b27n1vl1qqp5e" path="res://scripts/characters/enemies/OrcController.cs" id="1_wtkkb"]
+[ext_resource type="Script" uid="uid://b27n1vl1qqp5e" path="res://scripts/characters/enemies/Player.cs" id="1_wtkkb"]
 [ext_resource type="Texture2D" uid="uid://dxenpnq62ta78" path="res://assets/sprites/enemies/Orc.png" id="2_m22oo"]
 [ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_m22oo"]
 [ext_resource type="AudioStream" uid="uid://c30gn654uubus" path="res://assets/audio/sfx/blade_swing_slice.wav" id="4_attack_sfx"]
