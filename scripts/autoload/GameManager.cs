@@ -18,7 +18,7 @@ public partial class GameManager : Node
     public GameState CurrentState { get; private set; } = GameState.Menu;
     public GameState PreviousState { get; private set; } = GameState.Menu;
 
-    public Node Player { get; set; }
+    public Node2D Player { get; set; }
 
     public override void _Ready()
     {

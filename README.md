@@ -159,8 +159,8 @@ Registered in **Project > Project Settings > Autoload**:
 ## Features
 
 ### Save System
-Characters implement a saveable interface via the `Character` base class:
-- `SaveableId`: Unique identifier (auto-generated from scene path + node path)
+Characters implement a Savable interface via the `Character` base class:
+- `SavableId`: Unique identifier (auto-generated from scene path + node path)
 - `GatherSaveData()`: Collects position, health, death state
 - `ApplySaveData()`: Restores state on load
 
@@ -191,6 +191,10 @@ Player includes:
 
 - block ability
 - dash ability
+- npcs
+  - dialog
+  - quests?
+  - fully stationary?
 - double jump ability
 - save / rest destinations
 - respawn all enemies on save

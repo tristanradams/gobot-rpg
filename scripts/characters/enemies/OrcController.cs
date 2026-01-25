@@ -7,7 +7,6 @@ public partial class OrcController : Character
 {
 	// References
 	private Node2D _player;
-	private AudioManager _audioManager;
 
 	// Orc-specific stats
 	[Export] public int Damage { get; set; } = 10;
@@ -28,25 +27,23 @@ public partial class OrcController : Character
 		Speed = 80.0f;
 		MaxHealth = 50;
 		BloodColor = new Color(0.24f, 0.87f, 0.63f); // MediumSeaGreen
-		Health = MaxHealth;
-		_audioManager = GetNode<AudioManager>("/root/AudioManager");
+		CurrentHealth = MaxHealth;
 		FindPlayer();
-
 		ApplyPendingSaveData();
 	}
 
 	private void ApplyPendingSaveData()
 	{
-		var pendingData = _saveManager.GetPendingData(SaveableId);
+		var pendingData = SaveManager.GetPendingData(SavableId);
 		if (pendingData == null) return;
 
 		ApplySaveData(pendingData);
-		_saveManager.ClearPendingData(SaveableId);
+		SaveManager.ClearPendingData(SavableId);
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (_state == State.Dead) return;
+		if (CurrentState == State.Dead) return;
 
 		var velocity = Velocity;
 
@@ -62,7 +59,7 @@ public partial class OrcController : Character
 		}
 
 		// Skip horizontal movement during attack/hurt
-		if (_state == State.Attacking || _state == State.Hurt)
+		if (CurrentState == State.Attacking || CurrentState == State.Hurt)
 		{
 			velocity.X = 0;
 			Velocity = velocity;
@@ -100,14 +97,14 @@ public partial class OrcController : Character
 
 			if (playerUnreachable)
 			{
-				_state = State.Idle;
+				CurrentState = State.Idle;
 				velocity.X = 0;
 				UpdateSprite(_facingDirection);
-				Sprite.Play(Anim.Idle);
+				Sprite.Play(CommonAnimation.Idle);
 			}
 			else
 			{
-				_state = State.Chasing;
+				CurrentState = State.Chasing;
 				velocity.X = _facingDirection * Speed;
 				UpdateSprite(_facingDirection);
 
@@ -120,9 +117,9 @@ public partial class OrcController : Character
 		}
 		else
 		{
-			_state = State.Idle;
+			CurrentState = State.Idle;
 			velocity.X = 0;
-			Sprite.Play(Anim.Idle);
+			Sprite.Play(CommonAnimation.Idle);
 		}
 
 		Velocity = velocity;
@@ -133,15 +130,15 @@ public partial class OrcController : Character
 	{
 		if (direction != 0) Sprite.FlipH = direction < 0;
 
-		if (_state == State.Chasing) Sprite.Play(Anim.Walk);
+		if (CurrentState == State.Chasing) Sprite.Play(CommonAnimation.Walk);
 	}
 
 	private void Attack()
 	{
-		_state = State.Attacking;
+		CurrentState = State.Attacking;
 		Velocity = Vector2.Zero;
-		Sprite.Play(Anim.SwingSword);
-		if (AttackSfx != null) _audioManager.PlaySfx(AttackSfx);
+		Sprite.Play(CommonAnimation.Attack);
+		if (AttackSfx != null) AudioManager.PlaySfx(AttackSfx);
 	}
 
 	private void FindPlayer()
@@ -151,7 +148,7 @@ public partial class OrcController : Character
 
 	protected override void OnDied()
 	{
-		_eventBus.EmitSignal(EventBus.SignalName.EnemyDefeated, this);
+		EventBus.EmitSignal(EventBus.SignalName.EnemyDefeated, this);
 	}
 
 	protected override void OnAttackFinished()

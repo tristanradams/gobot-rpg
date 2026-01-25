@@ -11,7 +11,7 @@ public partial class SaveManager : Node
 
     private GameManager _gameManager;
 
-    // Pending data to apply when scene loads, keyed by SaveableId
+    // Pending data to apply when scene loads, keyed by SavableId
     private Godot.Collections.Dictionary<string, Godot.Collections.Dictionary> _pendingCharacterData = new();
 
     public override void _Ready()
@@ -92,20 +92,20 @@ public partial class SaveManager : Node
     }
 
     /// <summary>
-    /// Gets pending save data for a character by its SaveableId.
+    /// Gets pending save data for a character by its SavableId.
     /// Returns null if no pending data exists.
     /// </summary>
-    public Godot.Collections.Dictionary GetPendingData(string saveableId)
+    public Godot.Collections.Dictionary GetPendingData(string SavableId)
     {
-        return _pendingCharacterData.TryGetValue(saveableId, out var data) ? data : null;
+        return _pendingCharacterData.TryGetValue(SavableId, out var data) ? data : null;
     }
 
     /// <summary>
     /// Removes pending data for a character after it's been applied.
     /// </summary>
-    public void ClearPendingData(string saveableId)
+    public void ClearPendingData(string SavableId)
     {
-        _pendingCharacterData.Remove(saveableId);
+        _pendingCharacterData.Remove(SavableId);
     }
 
     /// <summary>
@@ -119,9 +119,9 @@ public partial class SaveManager : Node
     /// <summary>
     /// Stores a character's death in pending data so it persists to the next save.
     /// </summary>
-    public void RegisterCharacterData(string saveableId, Godot.Collections.Dictionary data)
+    public void RegisterCharacterData(string SavableId, Godot.Collections.Dictionary data)
     {
-        _pendingCharacterData[saveableId] = data;
+        _pendingCharacterData[SavableId] = data;
     }
 
     private Godot.Collections.Dictionary GatherSaveData()
@@ -129,20 +129,20 @@ public partial class SaveManager : Node
         // Start with any pending data (includes dead characters)
         var characterData = new Godot.Collections.Dictionary<string, Godot.Collections.Dictionary>(_pendingCharacterData);
 
-        // Gather/update data from all live saveable characters
+        // Gather/update data from all live Savable characters
         foreach (var node in GetTree().GetNodesInGroup("player"))
         {
-            if (node is Character character && character.Saveable)
+            if (node is Character character && character.Savable)
             {
-                characterData[character.SaveableId] = character.GatherSaveData();
+                characterData[character.SavableId] = character.GatherSaveData();
             }
         }
 
         foreach (var node in GetTree().GetNodesInGroup("enemies"))
         {
-            if (node is Character character && character.Saveable)
+            if (node is Character character && character.Savable)
             {
-                characterData[character.SaveableId] = character.GatherSaveData();
+                characterData[character.SavableId] = character.GatherSaveData();
             }
         }
 
