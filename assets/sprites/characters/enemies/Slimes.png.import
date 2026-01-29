@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tyco2p71fyuh"
-path="res://.godot/imported/Player.png-9b9d10c90a4f9b3bee41df6417735edc.ctex"
+uid="uid://ow3fa77xxkld"
+path="res://.godot/imported/Slimes.png-822a41b08168ebde30b77d5e8a8f2d67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/characters/Player.png"
-dest_files=["res://.godot/imported/Player.png-9b9d10c90a4f9b3bee41df6417735edc.ctex"]
+source_file="res://assets/sprites/characters/enemies/Slimes.png"
+dest_files=["res://.godot/imported/Slimes.png-822a41b08168ebde30b77d5e8a8f2d67.ctex"]
 
 [params]
 

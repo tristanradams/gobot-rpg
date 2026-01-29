@@ -175,20 +175,15 @@ public partial class Player : FightingCharacter
         else if (CurrentState == State.Attacking)
         {
         }
-        else if (direction == 0)
+        else if (direction != 0)
         {
-            CurrentState = State.Idle;
-            Sprite.Play(CommonCharacterAnimation.Idle);
-        }
-        else if (_isRunning)
-        {
-            CurrentState = State.Running;
-            Sprite.Play(PlayerAnimation.Run);
+            CurrentState = _isRunning ? State.Running : State.Walking;
+            Sprite.Play(_isRunning ? PlayerAnimation.Run : PlayerAnimation.Walk);
         }
         else
         {
-            CurrentState = State.Walking;
-            Sprite.Play(PlayerAnimation.Walk);
+            CurrentState = State.Idle;
+            Sprite.Play(CommonCharacterAnimation.Idle);
         }
     }
 

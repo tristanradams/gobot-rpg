@@ -201,3 +201,6 @@ Player includes:
 - floating familiar
   - unlocks chests & doors (possibly through equippable item)
   - fires projectiles (possibly through equippable item)
+
+https://www.spriters-resource.com/pc_computer/maplestory/
+https://www.spriters-resource.com/pc_computer/maplestory/asset/21703/

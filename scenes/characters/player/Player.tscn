@@ -1,4 +1,4 @@
-[gd_scene load_steps=94 format=3 uid="uid://bcpgc26qtcp0v"]
+[gd_scene format=3 uid="uid://bcpgc26qtcp0v"]
 
 [ext_resource type="Script" uid="uid://dyruwwixpd7er" path="res://scripts/characters/player/Player.cs" id="1_b7oxf"]
 [ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_c12fh"]
@@ -610,23 +610,23 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0fx5i"]
 size = Vector2(16, 29)
 
-[node name="Player" type="CharacterBody2D" groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=412314811 groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_b7oxf")
 AttackSfx = ExtResource("4_attack_sfx")
 HurtSfx = ExtResource("5_hurt_sfx")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=29511246]
 sprite_frames = SubResource("SpriteFrames_6xev7")
 animation = &"punch_jab"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=339910432]
 position = Vector2(0, 1.5)
 shape = SubResource("RectangleShape2D_0fx5i")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1860104830]
 
-[node name="HealthBar" parent="." instance=ExtResource("3_c12fh")]
+[node name="HealthBar" parent="." unique_id=2037419902 instance=ExtResource("3_c12fh")]
 offset_left = -12.0
 offset_top = -22.0
 offset_right = 12.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b3lbwjuajxfe5"]
+[gd_scene format=3 uid="uid://b3lbwjuajxfe5"]
 
 [ext_resource type="PackedScene" uid="uid://bcpgc26qtcp0v" path="res://scenes/characters/player/Player.tscn" id="1_player"]
 [ext_resource type="AudioStream" uid="uid://cs4xe6htkgksv" path="res://assets/audio/music/game.mp3" id="2_bqfg8"]
@@ -11,67 +11,166 @@
 [ext_resource type="PackedScene" uid="uid://c64o3vx5alcxs" path="res://scenes/ui/menus/DeathMenu.tscn" id="7_death"]
 [ext_resource type="PackedScene" uid="uid://bgqxj8ruq1uj8" path="res://scenes/characters/enemies/WalkingMushroom.tscn" id="8_s8dsv"]
 [ext_resource type="PackedScene" uid="uid://q2tcqgjwll0u" path="res://scenes/characters/enemies/FlyingMushroom.tscn" id="9_r76va"]
+[ext_resource type="PackedScene" uid="uid://ddeor12dbno6n" path="res://scenes/characters/player/FollowBot.tscn" id="13_56uwx"]
 [ext_resource type="Script" uid="uid://llw6c4u3mx4n" path="res://scripts/levels/Main.cs" id="main_script"]
 
-[node name="Main" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(511, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(64, 8)
+
+[node name="Main" type="Node2D" unique_id=1462318560]
 script = ExtResource("main_script")
 BackgroundMusic = ExtResource("2_bqfg8")
 
-[node name="Background" type="Node2D" parent="."]
+[node name="Background" type="Node2D" parent="." unique_id=1278435096]
 
-[node name="Parallax2D Layer 0" type="Parallax2D" parent="Background"]
+[node name="Parallax2D Layer 0" type="Parallax2D" parent="Background" unique_id=2065372885]
 scroll_scale = Vector2(0.4, 0.4)
 repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 0"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 0" unique_id=449409818]
 position = Vector2(357, 84)
 texture = ExtResource("2_i6wr6")
 
-[node name="Parallax2D Layer 1" type="Parallax2D" parent="Background"]
+[node name="Parallax2D Layer 1" type="Parallax2D" parent="Background" unique_id=402561525]
 scroll_scale = Vector2(0.5, 0.5)
 repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 1"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 1" unique_id=566680411]
 position = Vector2(357, 84)
 texture = ExtResource("3_dexww")
 
-[node name="Parallax2D Layer 2" type="Parallax2D" parent="Background"]
+[node name="Parallax2D Layer 2" type="Parallax2D" parent="Background" unique_id=1906143407]
 scroll_scale = Vector2(0.6, 0.6)
 repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 2"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 2" unique_id=729281598]
 position = Vector2(357, 84)
 texture = ExtResource("4_2imrs")
 
-[node name="Parallax2D Layer 3" type="Parallax2D" parent="Background"]
+[node name="Parallax2D Layer 3" type="Parallax2D" parent="Background" unique_id=1462698006]
 scroll_scale = Vector2(0.75, 0.75)
 repeat_size = Vector2(300, 0)
 repeat_times = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 3"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/Parallax2D Layer 3" unique_id=385976331]
 position = Vector2(357, 84)
 texture = ExtResource("5_e2wj5")
 
-[node name="Enemies" type="Node2D" parent="."]
+[node name="Platforms" type="Node2D" parent="." unique_id=1916883520]
 
-[node name="JumpingOrc" parent="Enemies" instance=ExtResource("3_agac1")]
+[node name="Ground1" type="StaticBody2D" parent="Platforms" unique_id=455825561]
+position = Vector2(167, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground1" unique_id=2027145979]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground1" unique_id=1715710612]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Ground2" type="StaticBody2D" parent="Platforms" unique_id=1923287022]
+position = Vector2(674, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground2" unique_id=1932185586]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground2" unique_id=1978503268]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Ground3" type="StaticBody2D" parent="Platforms" unique_id=2078128448]
+position = Vector2(-181, 179)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground3" unique_id=324915190]
+position = Vector2(95.5, 0)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Platforms/Ground3" unique_id=429921053]
+offset_left = -160.0
+offset_top = -8.0
+offset_right = 351.0
+offset_bottom = 8.0
+color = Color(0.4, 0.3, 0.2, 1)
+
+[node name="Platform1" type="StaticBody2D" parent="Platforms" unique_id=1326708139]
+position = Vector2(84, 64)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform1" unique_id=702795676]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform1" unique_id=1684194771]
+offset_left = -32.0
+offset_top = -4.0
+offset_right = 32.0
+offset_bottom = 107.0
+color = Color(0.61101425, 0.3106405, 0.4158188, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Platform2" type="StaticBody2D" parent="Platforms" unique_id=1081590914]
+position = Vector2(116, 136)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2" unique_id=1275216774]
+shape = SubResource("RectangleShape2D_platform")
+one_way_collision = true
+
+[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform2" unique_id=1642267161]
+offset_left = -32.0
+offset_top = -4.0
+offset_right = 32.0
+offset_bottom = 35.0
+color = Color(0.5, 0.4, 0.3, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Platform3" type="StaticBody2D" parent="Platforms" unique_id=93109038]
+position = Vector2(199, 100)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform3" unique_id=369384204]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="PlatformSprite" type="ColorRect" parent="Platforms/Platform3" unique_id=1520020417]
+offset_left = -32.0
+offset_top = -4.0
+offset_right = 32.0
+offset_bottom = 4.0
+color = Color(0.5, 0.4, 0.3, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Enemies" type="Node2D" parent="." unique_id=1554556232]
+
+[node name="JumpingOrc" parent="Enemies" unique_id=145103295 instance=ExtResource("3_agac1")]
 position = Vector2(-1, 163)
 
-[node name="WalkingMushroom" parent="Enemies" instance=ExtResource("8_s8dsv")]
+[node name="WalkingMushroom" parent="Enemies" unique_id=398720743 instance=ExtResource("8_s8dsv")]
 position = Vector2(396, 137)
 
-[node name="FlyingMushroom" parent="Enemies" instance=ExtResource("9_r76va")]
+[node name="FlyingMushroom" parent="Enemies" unique_id=1965594565 instance=ExtResource("9_r76va")]
 position = Vector2(369, 39)
 motion_mode = 1
 
-[node name="Player" parent="." instance=ExtResource("1_player")]
+[node name="Player" parent="." unique_id=256415583 instance=ExtResource("1_player")]
 position = Vector2(87, 45)
 
-[node name="Menus" type="CanvasLayer" parent="."]
+[node name="FollowBot" parent="." unique_id=2087801585 instance=ExtResource("13_56uwx")]
+position = Vector2(1, 1)
 
-[node name="PauseMenu" parent="Menus" instance=ExtResource("6_pause")]
+[node name="Menus" type="CanvasLayer" parent="." unique_id=1040165748]
 
-[node name="DeathMenu" parent="Menus" instance=ExtResource("7_death")]
+[node name="PauseMenu" parent="Menus" unique_id=1029396016 instance=ExtResource("6_pause")]
+
+[node name="DeathMenu" parent="Menus" unique_id=1879694259 instance=ExtResource("7_death")]
