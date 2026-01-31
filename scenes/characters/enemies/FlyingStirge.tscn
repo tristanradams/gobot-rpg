@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://oiynbut457qu"]
+
+[ext_resource type="Script" uid="uid://c3l2a1ffg7n2g" path="res://scripts/characters/enemies/FlyingStirge.cs" id="1_ug7r8"]
+[ext_resource type="Texture2D" uid="uid://doidde7duxwkc" path="res://assets/sprites/characters/enemies/Strige.png" id="2_ug7r8"]
+[ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_sjmg0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5ajsn"]
+size = Vector2(18.5, 17.125)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_llwlh"]
+atlas = ExtResource("2_ug7r8")
+region = Rect2(152, 192, 36, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sjmg0"]
+atlas = ExtResource("2_ug7r8")
+region = Rect2(116, 192, 36, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j5fmu"]
+atlas = ExtResource("2_ug7r8")
+region = Rect2(80, 192, 36, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uiits"]
+atlas = ExtResource("2_ug7r8")
+region = Rect2(44, 192, 36, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dhhtc"]
+atlas = ExtResource("2_ug7r8")
+region = Rect2(136, 27, 50, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mk7vd"]
+atlas = ExtResource("2_ug7r8")
+region = Rect2(86, 27, 50, 50)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_618ek"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_llwlh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sjmg0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j5fmu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uiits")
+}],
+"loop": false,
+"name": &"die",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhhtc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mk7vd")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhhtc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mk7vd")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=180636798 groups=["enemies"]]
+collision_layer = 4
+script = ExtResource("1_ug7r8")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1754652989]
+shape = SubResource("RectangleShape2D_5ajsn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2070292843]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_618ek")
+animation = &"fly"
+
+[node name="HealthBar" parent="." unique_id=1294499057 instance=ExtResource("3_sjmg0")]
+offset_left = -12.0
+offset_top = -15.0
+offset_right = 12.0
+offset_bottom = -10.0

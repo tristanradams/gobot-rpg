@@ -7,6 +7,8 @@ public static class PlayerAnimation
 {
     public const string Walk = "walk";
     public const string Run = "run";
+    public const string Crouch = "crouch";
+    public const string CrouchWalk = "crouch_walk";
     public const string Jump = "jump";
     public const string Punch = "punch";
     public const string PunchCross = "punch_cross";
@@ -32,6 +34,7 @@ public partial class Player : FightingCharacter
     private float _lastLeftTapTime;
 
     private float _lastRightTapTime;
+    private bool _isCrouching;
 
     // Platformer physics
     [Export] public float CoyoteTime { get; set; } = 0.12f;
@@ -42,8 +45,11 @@ public partial class Player : FightingCharacter
     [Export] public float RunSpeed { get; set; } = 200.0f;
     [Export] public float DoubleTapTime { get; set; } = 0.25f;
 
+    // Crouching
+    [Export] public float CrouchSpeed { get; set; } = 50.0f;
+
     // Combo system
-    [Export] public float ComboResetTime { get; set; } = 2.5f;
+    [Export] public float ComboResetTime { get; set; } = 3.5f;
 
     protected override string[] AttackAnimations =>
         [PlayerAnimation.PunchCross, PlayerAnimation.PunchJab, PlayerAnimation.Punch];
@@ -72,6 +78,9 @@ public partial class Player : FightingCharacter
         else
             _coyoteTimer -= (float)delta;
 
+        // Handle crouching (only on floor)
+        _isCrouching = Input.IsActionPressed("ui_down") && onFloor;
+
         // Update jump buffer timer
         if (Input.IsActionJustPressed("jump"))
             _jumpBufferTimer = JumpBufferTime;
@@ -91,7 +100,7 @@ public partial class Player : FightingCharacter
         {
             if (TryDropThrough()) _jumpBufferTimer = 0.0f;
         }
-        else if (hasBufferedJump && canCoyoteJump)
+        else if (hasBufferedJump && canCoyoteJump && !_isCrouching)
         {
             velocity.Y = JumpVelocity;
             CurrentState = State.Jumping;
@@ -132,8 +141,9 @@ public partial class Player : FightingCharacter
             _lastRightTapTime = currentTime;
         }
 
-        // Stop running if direction released or changed
-        if (direction == 0 || (_isRunning && Input.IsActionJustPressed("ui_left") && Velocity.X > 0) ||
+        // Stop running if direction released, changed, or crouching
+        if (direction == 0 || _isCrouching ||
+            (_isRunning && Input.IsActionJustPressed("ui_left") && Velocity.X > 0) ||
             (_isRunning && Input.IsActionJustPressed("ui_right") && Velocity.X < 0))
             _isRunning = false;
 
@@ -144,7 +154,7 @@ public partial class Player : FightingCharacter
         }
         else
         {
-            var currentSpeed = _isRunning ? RunSpeed : Speed;
+            var currentSpeed = _isCrouching ? CrouchSpeed : (_isRunning ? RunSpeed : Speed);
             velocity.X = direction * currentSpeed;
         }
 
@@ -174,6 +184,11 @@ public partial class Player : FightingCharacter
         }
         else if (CurrentState == State.Attacking)
         {
+        }
+        else if (_isCrouching)
+        {
+            CurrentState = direction != 0 ? State.Walking : State.Idle;
+            Sprite.Play(direction != 0 ? PlayerAnimation.CrouchWalk : PlayerAnimation.Crouch);
         }
         else if (direction != 0)
         {

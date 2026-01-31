@@ -5,143 +5,179 @@ namespace RpgCSharp.scripts.characters.enemies;
 
 public abstract partial class Enemy : FightingCharacter
 {
-	protected bool AppliesGravity = true;
-	protected float DistanceToPlayer;
-	protected float FacingDirection = 1.0f;
-	protected float HorizontalDistance;
+    protected bool AppliesGravity = true;
+    protected float DistanceToPlayer;
+    protected float FacingDirection = 1.0f;
+    protected float HorizontalDistance;
 
-	// Updated each physics frame when Player is valid
-	protected Vector2 OffsetToPlayer;
-	protected Node2D Player;
-	protected float VerticalDistance;
-	[Export] public float DetectionRange { get; set; } = 150.0f;
-	[Export] public float HorizontalChaseThreshold { get; set; } = 15.0f;
-	[Export] public float VerticalChaseThreshold { get; set; } = 80.0f;
+    // Updated each physics frame when Player is valid
+    protected Vector2 OffsetToPlayer;
+    protected float VerticalDistance;
 
-	protected override void OnFightingCharacterInitialized()
-	{
-		FindPlayer();
-		OnEnemyInitialized();
-		Load();
-	}
+    private float _contactDamageTimer;
+    private float _hurtTimer;
+    private const float HurtDuration = 0.2f;
 
-	protected virtual void OnEnemyInitialized()
-	{
-	}
+    [Export] public bool CanAttack { get; set; } = true;
+    [Export] public float ContactDamageCooldown { get; set; } = 1.0f;
+    [Export] public float ContactDamageRange { get; set; }
+    [Export] public float DetectionRange { get; set; } = 150.0f;
+    [Export] public float HorizontalChaseThreshold { get; set; } = 15.0f;
+    [Export] public float VerticalChaseThreshold { get; set; } = 80.0f;
 
-	public override void _PhysicsProcess(double delta)
-	{
-		if (CurrentState == State.Dead) return;
+    protected override void OnFightingCharacterInitialized()
+    {
+        OnEnemyInitialized();
+        InitializeContactDamageRange();
+        Load();
+    }
 
-		var velocity = Velocity;
+    private void InitializeContactDamageRange()
+    {
+        if (ContactDamageRange > 0) return;
 
-		if (AppliesGravity && !IsOnFloor()) velocity.Y += Gravity * (float)delta;
+        var collisionShape = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (collisionShape?.Shape is RectangleShape2D rect)
+            ContactDamageRange = Mathf.Max(rect.Size.X, rect.Size.Y) / 2 + 5;
+        else if (collisionShape?.Shape is CircleShape2D circle)
+            ContactDamageRange = circle.Radius + 5;
+        else
+            ContactDamageRange = 15.0f;
+    }
 
-		if (Player == null)
-		{
-			FindPlayer();
-			Velocity = velocity;
-			MoveAndSlide();
-			return;
-		}
+    protected virtual void OnEnemyInitialized()
+    {
+    }
 
-		if (CurrentState is State.Attacking or State.Hurt)
-		{
-			velocity.X = 0;
-			Velocity = velocity;
-			MoveAndSlide();
-			return;
-		}
+    protected override void OnDamageTaken(int amount)
+    {
+        _hurtTimer = HurtDuration;
+    }
 
-		// Compute distances once per frame
-		OffsetToPlayer = Player.GlobalPosition - GlobalPosition;
-		DistanceToPlayer = OffsetToPlayer.Length();
-		HorizontalDistance = Mathf.Abs(OffsetToPlayer.X);
-		VerticalDistance = Mathf.Abs(OffsetToPlayer.Y);
+    public override void _PhysicsProcess(double delta)
+    {
+        if (CurrentState == State.Dead) return;
 
-		if (DistanceToPlayer <= AttackRange && IsOnFloor())
-		{
-			Attack();
-			Velocity = velocity;
-			MoveAndSlide();
-			return;
-		}
+        var velocity = Velocity;
 
-		if (DistanceToPlayer <= DetectionRange)
-		{
-			velocity = ProcessChase(velocity);
-		}
-		else
-		{
-			CurrentState = State.Idle;
-			velocity.X = 0;
-			Sprite.Play(CommonCharacterAnimation.Idle);
-		}
+        if (AppliesGravity && !IsOnFloor()) velocity.Y += Gravity * (float)delta;
 
-		Velocity = velocity;
-		MoveAndSlide();
-	}
+        // Compute distances once per frame (before any early returns)
+        OffsetToPlayer = GameManager.Player.GlobalPosition - GlobalPosition;
+        DistanceToPlayer = OffsetToPlayer.Length();
+        HorizontalDistance = Mathf.Abs(OffsetToPlayer.X);
+        VerticalDistance = Mathf.Abs(OffsetToPlayer.Y);
 
-	protected virtual Vector2 ProcessChase(Vector2 velocity)
-	{
-		float directionToPlayer = Mathf.Sign(OffsetToPlayer.X);
+        // Handle hurt state with timer
+        if (CurrentState == State.Hurt)
+        {
+            _hurtTimer -= (float)delta;
+            if (_hurtTimer <= 0)
+                CurrentState = State.Idle;
+        }
 
-		if (HorizontalDistance > HorizontalChaseThreshold)
-			FacingDirection = directionToPlayer;
+        if (CurrentState is State.Attacking or State.Hurt)
+        {
+            velocity.X = 0;
+            Velocity = velocity;
+            MoveAndSlide();
+            return;
+        }
 
-		var playerUnreachable = VerticalDistance > VerticalChaseThreshold &&
-								HorizontalDistance < HorizontalChaseThreshold;
+        if (CanAttack && DistanceToPlayer <= AttackRange && IsOnFloor())
+        {
+            Attack();
+            Velocity = velocity;
+            MoveAndSlide();
+            return;
+        }
 
-		if (playerUnreachable)
-		{
-			CurrentState = State.Idle;
-			velocity.X = 0;
-			UpdateSprite(FacingDirection);
-			Sprite.Play(CommonCharacterAnimation.Idle);
-		}
-		else
-		{
-			CurrentState = State.Chasing;
-			velocity.X = FacingDirection * Speed;
-			UpdateSprite(FacingDirection);
-		}
+        if (DistanceToPlayer <= DetectionRange)
+        {
+            velocity = ProcessChase(velocity);
+        }
+        else
+        {
+            CurrentState = State.Idle;
+            velocity.X = 0;
+            Sprite.Play(CommonCharacterAnimation.Idle);
+        }
 
-		return velocity;
-	}
+        Velocity = velocity;
+        MoveAndSlide();
 
-	protected virtual void UpdateSprite(float direction)
-	{
-		if (direction != 0) Sprite.FlipH = direction < 0;
+        if (!CanAttack)
+            ProcessContactDamage(delta);
+    }
 
-		if (CurrentState == State.Chasing)
-			Sprite.Play(AppliesGravity ? WalkingEnemyAnimation.Walk : FlyingEnemyAnimation.Fly);
-	}
+    private void ProcessContactDamage(double delta)
+    {
+        if (_contactDamageTimer > 0)
+        {
+            _contactDamageTimer -= (float)delta;
+            return;
+        }
 
-	protected void FindPlayer()
-	{
-		Player = GetTree().GetFirstNodeInGroup("player") as Node2D;
-	}
+        if (DistanceToPlayer > ContactDamageRange) return;
 
-	protected override void OnDied()
-	{
-		EventBus.EmitSignal(EventBus.SignalName.EnemyDefeated, this);
-	}
+        GameManager.Player.Call("TakeDamage", AttackDamage);
+        _contactDamageTimer = ContactDamageCooldown;
+    }
 
-	protected override void OnAttackFinished()
-	{
-		TryHitPlayer();
-	}
+    protected virtual Vector2 ProcessChase(Vector2 velocity)
+    {
+        float directionToPlayer = Mathf.Sign(OffsetToPlayer.X);
 
-	protected override void OnDeathAnimationFinished()
-	{
-		QueueFree();
-	}
+        if (HorizontalDistance > HorizontalChaseThreshold)
+            FacingDirection = directionToPlayer;
 
-	protected virtual void TryHitPlayer()
-	{
-		if (Player == null) return;
-		if (DistanceToPlayer > AttackRange * 1.5f) return;
-		if (Player.HasMethod("TakeDamage"))
-			Player.Call("TakeDamage", AttackDamage);
-	}
+        var playerUnreachable = VerticalDistance > VerticalChaseThreshold &&
+                                HorizontalDistance < HorizontalChaseThreshold;
+
+        if (playerUnreachable)
+        {
+            CurrentState = State.Idle;
+            velocity.X = 0;
+            UpdateSprite(FacingDirection);
+            Sprite.Play(CommonCharacterAnimation.Idle);
+        }
+        else
+        {
+            CurrentState = State.Chasing;
+            velocity.X = FacingDirection * Speed;
+            UpdateSprite(FacingDirection);
+        }
+
+        return velocity;
+    }
+
+    protected virtual void UpdateSprite(float direction)
+    {
+        if (direction != 0) Sprite.FlipH = direction < 0;
+
+        if (CurrentState == State.Chasing)
+            Sprite.Play(AppliesGravity ? WalkingEnemyAnimation.Walk : FlyingEnemyAnimation.Fly);
+    }
+
+    protected override void OnDied()
+    {
+        EventBus.EmitSignal(EventBus.SignalName.EnemyDefeated, this);
+    }
+
+    protected override void OnAttackFinished()
+    {
+        TryHitPlayer();
+    }
+
+    protected override void OnDeathAnimationFinished()
+    {
+        QueueFree();
+    }
+
+    protected virtual void TryHitPlayer()
+    {
+        if (GameManager.Player == null) return;
+        if (DistanceToPlayer > AttackRange * 1.5f) return;
+        GameManager.Player.Call("TakeDamage", AttackDamage);
+    }
 }

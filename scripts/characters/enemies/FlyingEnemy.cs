@@ -11,7 +11,7 @@ public abstract partial class FlyingEnemy : Enemy
 {
     [Export] public float VerticalSpeed { get; set; } = 80.0f;
 
-    protected override void OnEnemyInitialized()
+    protected FlyingEnemy()
     {
         AppliesGravity = false;
     }

@@ -9,8 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://8ib7pv61de8c" path="res://assets/sprites/backgrounds/Forest-3.png" id="5_e2wj5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menus/PauseMenu.tscn" id="6_pause"]
 [ext_resource type="PackedScene" uid="uid://c64o3vx5alcxs" path="res://scenes/ui/menus/DeathMenu.tscn" id="7_death"]
-[ext_resource type="PackedScene" uid="uid://bgqxj8ruq1uj8" path="res://scenes/characters/enemies/WalkingMushroom.tscn" id="8_s8dsv"]
-[ext_resource type="PackedScene" uid="uid://q2tcqgjwll0u" path="res://scenes/characters/enemies/FlyingMushroom.tscn" id="9_r76va"]
+[ext_resource type="PackedScene" uid="uid://cs2a381wdjhg0" path="res://scenes/characters/enemies/BlueSnail.tscn" id="8_r76va"]
+[ext_resource type="PackedScene" uid="uid://oiynbut457qu" path="res://scenes/characters/enemies/FlyingStirge.tscn" id="9_56uwx"]
 [ext_resource type="PackedScene" uid="uid://ddeor12dbno6n" path="res://scenes/characters/player/FollowBot.tscn" id="13_56uwx"]
 [ext_resource type="Script" uid="uid://llw6c4u3mx4n" path="res://scripts/levels/Main.cs" id="main_script"]
 
@@ -156,18 +156,17 @@ metadata/_edit_use_anchors_ = true
 [node name="JumpingOrc" parent="Enemies" unique_id=145103295 instance=ExtResource("3_agac1")]
 position = Vector2(-1, 163)
 
-[node name="WalkingMushroom" parent="Enemies" unique_id=398720743 instance=ExtResource("8_s8dsv")]
-position = Vector2(396, 137)
+[node name="BlueSnail" parent="Enemies" unique_id=180636798 instance=ExtResource("8_r76va")]
+position = Vector2(-113, 162)
 
-[node name="FlyingMushroom" parent="Enemies" unique_id=1965594565 instance=ExtResource("9_r76va")]
-position = Vector2(369, 39)
-motion_mode = 1
+[node name="FlyingStirge" parent="Enemies" unique_id=1998062978 instance=ExtResource("9_56uwx")]
+position = Vector2(-86, 61)
+
+[node name="FollowBot" parent="." unique_id=2087801585 instance=ExtResource("13_56uwx")]
+position = Vector2(31, -5)
 
 [node name="Player" parent="." unique_id=256415583 instance=ExtResource("1_player")]
 position = Vector2(87, 45)
-
-[node name="FollowBot" parent="." unique_id=2087801585 instance=ExtResource("13_56uwx")]
-position = Vector2(1, 1)
 
 [node name="Menus" type="CanvasLayer" parent="." unique_id=1040165748]
 

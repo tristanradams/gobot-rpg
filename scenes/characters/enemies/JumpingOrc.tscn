@@ -1,9 +1,12 @@
-[gd_scene load_steps=37 format=3 uid="uid://crqiensnpp7ku"]
+[gd_scene format=3 uid="uid://crqiensnpp7ku"]
 
 [ext_resource type="Script" uid="uid://b27n1vl1qqp5e" path="res://scripts/characters/enemies/JumpingOrc.cs" id="1_wtkkb"]
 [ext_resource type="Texture2D" uid="uid://dxenpnq62ta78" path="res://assets/sprites/enemies/Orc.png" id="2_m22oo"]
 [ext_resource type="PackedScene" uid="uid://cder4cxoelenv" path="res://scenes/ui/hud/HealthBar.tscn" id="3_m22oo"]
 [ext_resource type="AudioStream" uid="uid://c30gn654uubus" path="res://assets/audio/sfx/blade_swing_slice.wav" id="4_attack_sfx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5ajsn"]
+size = Vector2(17, 17)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gycpy"]
 atlas = ExtResource("2_m22oo")
@@ -266,23 +269,20 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5ajsn"]
-size = Vector2(17, 17)
-
-[node name="CharacterBody2D" type="CharacterBody2D" groups=["enemies"]]
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1422195554 groups=["enemies"]]
 collision_layer = 4
 script = ExtResource("1_wtkkb")
 AttackSfx = ExtResource("4_attack_sfx")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_618ek")
-animation = &"jump"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=875900290]
 position = Vector2(1.5, -1.5)
 shape = SubResource("RectangleShape2D_5ajsn")
 
-[node name="HealthBar" parent="." instance=ExtResource("3_m22oo")]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=350232580]
+sprite_frames = SubResource("SpriteFrames_618ek")
+animation = &"jump"
+
+[node name="HealthBar" parent="." unique_id=739321871 instance=ExtResource("3_m22oo")]
 offset_left = -12.0
 offset_top = -18.0
 offset_right = 12.0
