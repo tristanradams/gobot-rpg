@@ -4,13 +4,13 @@ namespace RpgCSharp.scripts.characters.player;
 
 public partial class FollowBot : Character
 {
-    private bool _isFollowing;
-
     [Export] public int AttackDamage { get; set; } = 100;
     [Export] public float Speed { get; set; } = 200.0f;
     [Export] public float FollowDistance { get; set; } = 35.0f;
     [Export] public float Smoothing { get; set; } = 7.5f;
     [Export] public float HoverOffset { get; set; } = -10.0f;
+
+    private bool _isFollowing;
 
     protected override void OnInitialized()
     {

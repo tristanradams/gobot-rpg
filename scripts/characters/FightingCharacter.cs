@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using RpgCSharp.scripts.autoload;
 
 namespace RpgCSharp.scripts.characters;
 
@@ -16,30 +17,40 @@ public static class CommonFightingSaveKey
     public const string IsDead = "is_dead";
 }
 
+public enum FightingCharacterState
+{
+    Idle,
+    Walking,
+    Running,
+    Attacking,
+    Hurt,
+    Dead,
+    Chasing,
+    Jumping,
+    Falling
+}
+
 public abstract partial class FightingCharacter : Character
 {
-    protected State CurrentState = State.Idle;
-
-    // Additional Stats
     [Export] public int MaxHealth { get; set; } = 100;
-    [Export] public int CurrentHealth { get; set; }
+    [Export] public int CurrentHealth { get; set; } = 100;
     [Export] public float Speed { get; set; } = 100.0f;
     [Export] public float Gravity { get; set; } = 800.0f;
     [Export] public float JumpVelocity { get; set; } = -300.0f;
     [Export] public int AttackDamage { get; set; } = 10;
-
     [Export] public int AttackRange { get; set; } = 50;
 
-    // Effects
     [Export] public bool BloodEnabled { get; set; } = true;
     [Export] public Color BloodColor { get; set; } = new(0.7f, 0.0f, 0.0f);
     [Export] public int BloodParticleCount { get; set; } = 12;
-    [Export] public Control HealthBar { get; set; }
-    [Export] public AudioStream AttackSfx { get; set; }
-    [Export] public AudioStream HurtSfx { get; set; }
 
-    protected virtual string[] AttackAnimations => [CommonFightingCharacterAnimation.Attack];
+    public Control HealthBar { get; set; }
+    public AudioStream AttackSfx { get; set; }
+    public AudioStream HurtSfx { get; set; }
 
+    protected FightingCharacterState CurrentState = FightingCharacterState.Idle;
+
+    protected virtual string[] AttackAnimations { get; set; } = [CommonFightingCharacterAnimation.Attack];
 
     protected override void OnInitialized()
     {
@@ -77,17 +88,17 @@ public abstract partial class FightingCharacter : Character
     {
     }
 
-    protected virtual void Attack()
+    public virtual void Attack()
     {
         Velocity = Vector2.Zero;
-        CurrentState = State.Attacking;
+        CurrentState = FightingCharacterState.Attacking;
         Sprite.Play(AttackAnimations[0]);
         if (AttackSfx != null) AudioManager.PlaySfx(AttackSfx);
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Node source = null)
     {
-        if (CurrentState == State.Dead) return;
+        if (CurrentState == FightingCharacterState.Dead) return;
 
         CurrentHealth -= amount;
         OnHealthChanged();
@@ -96,15 +107,17 @@ public abstract partial class FightingCharacter : Character
         if (HurtSfx != null) AudioManager.PlaySfx(HurtSfx);
         HealthBar?.Call("UpdateHealth", CurrentHealth, MaxHealth);
 
+        EventBus.EmitSignal(EventBus.SignalName.DamageDealt, this, amount, source);
+
         if (CurrentHealth <= 0)
             Die();
         else
-            CurrentState = State.Hurt;
+            CurrentState = FightingCharacterState.Hurt;
     }
 
     public void Die()
     {
-        CurrentState = State.Dead;
+        CurrentState = FightingCharacterState.Dead;
         Velocity = Vector2.Zero;
         Sprite.Play(CommonFightingCharacterAnimation.Die);
         Save();
@@ -113,7 +126,7 @@ public abstract partial class FightingCharacter : Character
 
     public void Heal(int amount)
     {
-        if (CurrentState == State.Dead) return;
+        if (CurrentState == FightingCharacterState.Dead) return;
         CurrentHealth = Mathf.Min(CurrentHealth + amount, MaxHealth);
         OnHealthChanged();
         HealthBar?.Call("UpdateHealth", CurrentHealth, MaxHealth);
@@ -163,7 +176,7 @@ public abstract partial class FightingCharacter : Character
         if (AttackAnimations.Contains(currentAnim))
         {
             OnAttackFinished();
-            CurrentState = State.Idle;
+            CurrentState = FightingCharacterState.Idle;
             return;
         }
 
@@ -175,7 +188,7 @@ public abstract partial class FightingCharacter : Character
     {
         var data = base.GatherSaveData();
         data[CommonFightingSaveKey.Health] = CurrentHealth;
-        data[CommonFightingSaveKey.IsDead] = CurrentState == State.Dead;
+        data[CommonFightingSaveKey.IsDead] = CurrentState == FightingCharacterState.Dead;
         return data;
     }
 
@@ -191,18 +204,5 @@ public abstract partial class FightingCharacter : Character
         CurrentHealth = (int)data[CommonFightingSaveKey.Health];
         OnHealthChanged();
         return true;
-    }
-
-    protected enum State
-    {
-        Idle,
-        Walking,
-        Running,
-        Attacking,
-        Hurt,
-        Dead,
-        Chasing,
-        Jumping,
-        Falling
     }
 }

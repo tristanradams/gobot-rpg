@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://dci4yppge4rox" path="res://scripts/characters/player/FollowBot.cs" id="1_yd8gh"]
 [ext_resource type="Texture2D" uid="uid://dw8uf3mx1ekoj" path="res://assets/sprites/characters/follower/sentinel.png" id="2_abo1a"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0fx5i"]
+size = Vector2(13, 11)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_7kolw"]
 atlas = ExtResource("2_abo1a")
 region = Rect2(0, 0, 64, 64)
@@ -67,18 +70,15 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_0fx5i"]
-size = Vector2(13, 11)
-
 [node name="CharacterBody2D" type="CharacterBody2D" unique_id=2087801585 groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_yd8gh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1092949743]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_0fx5i")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1934790543]
 scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_6xev7")
 animation = &"idle"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1092949743]
-position = Vector2(0, 0.5)
-shape = SubResource("RectangleShape2D_0fx5i")

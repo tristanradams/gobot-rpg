@@ -11,7 +11,7 @@ public partial class AudioManager : Node
     private const string SfxBus = "SFX";
 
     private AudioStreamPlayer _musicPlayer;
-    private List<AudioStreamPlayer> _sfxPlayers = new();
+    private List<AudioStreamPlayer> _sfxPlayers = [];
     private int _sfxPoolSize = 8;
 
     private AudioStream _currentMusic;
@@ -31,7 +31,7 @@ public partial class AudioManager : Node
 
     private void SetupSfxPool()
     {
-        for (int i = 0; i < _sfxPoolSize; i++)
+        for (var i = 0; i < _sfxPoolSize; i++)
         {
             var player = new AudioStreamPlayer();
             player.Bus = SfxBus;
@@ -68,6 +68,7 @@ public partial class AudioManager : Node
         {
             _musicPlayer.Stop();
         }
+
         _currentMusic = null;
     }
 

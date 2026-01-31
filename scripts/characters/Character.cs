@@ -19,7 +19,6 @@ public static class CommonCharacterSaveKey
 
 public abstract partial class Character : CharacterBody2D, IHasGlobals, ISavable
 {
-    [Export] public string CharacterName { get; set; }
     public AnimatedSprite2D Sprite { get; set; }
 
     public AudioManager AudioManager { get; set; }
@@ -38,9 +37,23 @@ public abstract partial class Character : CharacterBody2D, IHasGlobals, ISavable
         }
     }
 
+    public override void _Ready()
+    {
+        AudioManager = GetNode<AudioManager>("/root/AudioManager");
+        EventBus = GetNode<EventBus>("/root/EventBus");
+        GameManager = GetNode<GameManager>("/root/GameManager");
+        SaveManager = GetNode<SaveManager>("/root/SaveManager");
+        Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        OnInitialized();
+    }
+
+    protected virtual void OnInitialized()
+    {
+    }
+
     public virtual void Save()
     {
-        SaveManager.RegisterCharacterData(SaveId, GatherSaveData());
+        SaveManager.RegisterSavableData(SaveId, GatherSaveData());
     }
 
     public virtual void Load()
@@ -68,19 +81,5 @@ public abstract partial class Character : CharacterBody2D, IHasGlobals, ISavable
         var posY = (float)data[CommonCharacterSaveKey.PositionY];
         GlobalPosition = new Vector2(posX, posY);
         return true;
-    }
-
-    public override void _Ready()
-    {
-        AudioManager = GetNode<AudioManager>("/root/AudioManager");
-        EventBus = GetNode<EventBus>("/root/EventBus");
-        GameManager = GetNode<GameManager>("/root/GameManager");
-        SaveManager = GetNode<SaveManager>("/root/SaveManager");
-        Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-        OnInitialized();
-    }
-
-    protected virtual void OnInitialized()
-    {
     }
 }

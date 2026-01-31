@@ -23,7 +23,7 @@ public abstract partial class FlyingEnemy : Enemy
         if (HorizontalDistance > HorizontalChaseThreshold)
             FacingDirection = directionToPlayer;
 
-        CurrentState = State.Chasing;
+        CurrentState = FightingCharacterState.Chasing;
 
         // Move directly toward player (both horizontal and vertical)
         velocity.X = FacingDirection * Speed;

@@ -1,8 +1,16 @@
 using Godot;
 using Godot.Collections;
-using RpgCSharp.scripts.characters;
+using RpgCSharp.scripts.interfaces;
+using CollectionExtensions = System.Collections.Generic.CollectionExtensions;
 
 namespace RpgCSharp.scripts.autoload;
+
+public static class SaveManagerSaveKey
+{
+    public const string TimeStamp = "timestamp";
+    public const string Scene = "Scene";
+    public const string Savables = "savables";
+}
 
 public partial class SaveManager : Node
 {
@@ -13,7 +21,7 @@ public partial class SaveManager : Node
     private GameManager _gameManager;
 
     // Pending data to apply when scene loads, keyed by SaveId
-    private Dictionary<string, Dictionary> _pendingCharacterData = new();
+    private Dictionary<string, Dictionary> _pendingSavableData = new();
 
     public override void _Ready()
     {
@@ -90,20 +98,20 @@ public partial class SaveManager : Node
     }
 
     /// <summary>
-    ///     Gets pending save data for a character by its SaveId.
+    ///     Gets pending save data for a savable by its SaveId.
     ///     Returns null if no pending data exists.
     /// </summary>
     public Dictionary GetPendingData(string saveId)
     {
-        return _pendingCharacterData.TryGetValue(saveId, out var data) ? data : null;
+        return CollectionExtensions.GetValueOrDefault(_pendingSavableData, saveId);
     }
 
     /// <summary>
-    ///     Removes pending data for a character after it's been applied.
+    ///     Removes pending data for a savable after it's been applied.
     /// </summary>
     public void ClearPendingData(string saveId)
     {
-        _pendingCharacterData.Remove(saveId);
+        _pendingSavableData.Remove(saveId);
     }
 
     /// <summary>
@@ -111,58 +119,71 @@ public partial class SaveManager : Node
     /// </summary>
     public void ClearAllPendingData()
     {
-        _pendingCharacterData.Clear();
+        _pendingSavableData.Clear();
     }
 
     /// <summary>
-    ///     Stores a character's data in pending data so it persists to the next save.
+    ///     Stores a savable's data in pending data so it persists to the next save.
     /// </summary>
-    public void RegisterCharacterData(string saveId, Dictionary data)
+    public void RegisterSavableData(string saveId, Dictionary data)
     {
-        _pendingCharacterData[saveId] = data;
+        _pendingSavableData[saveId] = data;
     }
 
     private Dictionary GatherSaveData()
     {
-        // Start with any pending data (includes dead characters)
-        var characterData = new Dictionary<string, Dictionary>(_pendingCharacterData);
+        // Start with any pending data (includes dead entities)
+        var savableData = new Dictionary<string, Dictionary>(_pendingSavableData);
 
-        // Gather/update data from all live Savable characters
-        foreach (var node in GetTree().GetNodesInGroup("player"))
-            if (node is Character savable)
-                characterData[savable.SaveId] = savable.GatherSaveData();
-
-        foreach (var node in GetTree().GetNodesInGroup("enemies"))
-            if (node is Character savable)
-                characterData[savable.SaveId] = savable.GatherSaveData();
+        // Gather/update data from all live ISavable nodes
+        foreach (var savable in FindAllSavables())
+            savableData[savable.SaveId] = savable.GatherSaveData();
 
         // Convert to array for storage
-        var characters = new Array<Dictionary>();
-        foreach (var data in characterData.Values) characters.Add(data);
+        var savables = new Array<Dictionary>();
+        foreach (var data in savableData.Values) savables.Add(data);
 
         return new Dictionary
         {
-            { "timestamp", Time.GetUnixTimeFromSystem() },
-            { "scene", GetTree().CurrentScene.SceneFilePath },
-            { "characters", characters }
+            { SaveManagerSaveKey.TimeStamp, Time.GetUnixTimeFromSystem() },
+            { SaveManagerSaveKey.Scene, GetTree().CurrentScene.SceneFilePath },
+            { SaveManagerSaveKey.Savables, savables }
         };
+    }
+
+    private System.Collections.Generic.IEnumerable<ISavable> FindAllSavables()
+    {
+        var nodes = new Array<Node>();
+        CollectAllNodes(GetTree().CurrentScene, nodes);
+
+        foreach (var node in nodes)
+            if (node is ISavable savable)
+                yield return savable;
+    }
+
+    private static void CollectAllNodes(Node root, Array<Node> nodes)
+    {
+        if (root == null) return;
+        nodes.Add(root);
+        foreach (var child in root.GetChildren())
+            CollectAllNodes(child, nodes);
     }
 
     private void ApplySaveData(Dictionary data)
     {
-        // Store character data to apply after scene loads
-        _pendingCharacterData.Clear();
+        // Store savable data to apply after scene loads
+        _pendingSavableData.Clear();
 
-        var characters = (Array)data["characters"];
-        foreach (var charData in characters)
+        var savables = (Array)data[SaveManagerSaveKey.Savables];
+        foreach (var savableData in savables)
         {
-            var dict = (Dictionary)charData;
+            var dict = (Dictionary)savableData;
             var id = (string)dict["id"];
-            _pendingCharacterData[id] = dict;
+            _pendingSavableData[id] = dict;
         }
 
         // Change to the saved scene
-        var scenePath = (string)data["scene"];
+        var scenePath = (string)data[SaveManagerSaveKey.Scene];
         GetTree().ChangeSceneToFile(scenePath);
     }
 

@@ -1,6 +1,6 @@
 # RPG Game
 
-A 2D RPG game built with Godot 4.5 and C#.
+A 2D RPG game built with Godot 4.6 and C#.
 
 ## Project Structure
 
@@ -8,12 +8,11 @@ A 2D RPG game built with Godot 4.5 and C#.
 /
 ├── assets/                     # Raw assets (art, audio, fonts)
 │   ├── sprites/               # All sprite assets
-│   │   ├── characters/        # Player and NPC sprites
-│   │   ├── enemies/           # Enemy sprites
-│   │   ├── items/             # Item/pickup sprites
-│   │   ├── ui/                # UI elements (buttons, icons)
-│   │   ├── tilesets/          # Tileset images for levels
-│   │   └── effects/           # Visual effect sprites
+│   │   ├── backgrounds/       # Scene backgrounds
+│   │   ├── characters/        # Player, Enemy, and NPC sprites
+│   │   ├── effects/           # Visual effect sprites
+│   │   ├── items/             #  Item/pickup sprites
+│   │   └── ui/                # UI elements (buttons, icons) 
 │   ├── audio/
 │   │   ├── music/             # Background music tracks
 │   │   └── sfx/               # Sound effects
@@ -50,38 +49,37 @@ A 2D RPG game built with Godot 4.5 and C#.
 │
 ├── resources/                  # Custom Resource data files (.tres)
 │   ├── items/                 # Item definitions
-│   ├── characters/            # Character stats/data
+│   ├── dialogues/             # Dialogue trees
 │   ├── quests/                # Quest definitions
-│   └── dialogues/             # Dialogue trees
+│   └── themes/                # Godot themes
 │
 └── addons/                     # Third-party Godot plugins
 ```
 
 ## Directory Purposes
 
+### `addons/`
+Third-party plugins from the Godot Asset Library or custom tooling.
+
 ### `assets/`
 Raw asset files organized by type. Sprites are further categorized by their usage in the game. This keeps art, audio, and fonts separate from game logic.
+
+### `resources/`
+Data files (`.tres`) that use custom Resource classes. Resources are Godot's way of storing game data like item stats, dialogue content, and quest objectives.
 
 ### `scenes/`
 All `.tscn` scene files. Each scene represents a reusable node tree. Scenes are organized to mirror the game's structure:
 - **characters/**: Anything that moves and has behavior
-- **ui/**: All user interface elements
-- **levels/**: Game world and map layouts
-- **items/**: Collectibles and equipment
 - **effects/**: Visual effects like particles
+- **items/**: Collectibles and equipment
+- **levels/**: Game world and map layouts
+- **ui/**: All user interface elements
 
 ### `scripts/`
 All C# `.cs` files. Scripts are organized to match their corresponding scenes where applicable.
 
 - **autoload/**: Scripts registered as singletons in Project Settings. These are globally accessible (e.g., `GameManager`, `AudioManager`, `EventBus`).
 - **systems/**: Core game mechanics that don't attach directly to a single scene (inventory logic, combat calculations, save/load).
-- **resources/**: Class definitions that extend `Resource` for custom data types.
-
-### `resources/`
-Data files (`.tres`) that use custom Resource classes. Resources are Godot's way of storing game data like item stats, dialogue content, and quest objectives.
-
-### `addons/`
-Third-party plugins from the Godot Asset Library or custom tooling.
 
 ## Conventions
 
@@ -90,60 +88,6 @@ Third-party plugins from the Godot Asset Library or custom tooling.
 - **Scripts**: `PascalCase.cs` (e.g., `Player.cs`, `InventorySystem.cs`)
 - **Resources**: `snake_case.tres` (e.g., `iron_sword.tres`, `quest_dragon_slayer.tres`)
 - **Assets**: `snake_case` with descriptive names (e.g., `player_idle.png`, `battle_theme.ogg`)
-
-### Script Organization
-Each script should follow this structure:
-```csharp
-using Godot;
-
-namespace RpgCSharp.scripts.characters;
-
-public partial class Character : CharacterBody2D
-{
-    // Constants
-    public static class Anim
-    {
-        public const string Idle = "idle";
-        public const string Walk = "walk";
-    }
-
-    // Enums
-    public enum State { Idle, Walking, Running }
-
-    // Exports (inspector variables)
-    [Export] public float Speed { get; set; } = 100.0f;
-
-    // Signals
-    [Signal] public delegate void HealthChangedEventHandler(int newHealth);
-
-    // Protected/private fields
-    protected State _state = State.Idle;
-    private int _health = 100;
-
-    // Node references
-    protected AnimatedSprite2D Sprite;
-
-    // Built-in callbacks
-    public override void _Ready()
-    {
-        Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-    }
-
-    // Public methods
-    public void TakeDamage(int amount)
-    {
-    }
-
-    // Private methods
-    private void UpdateState()
-    {
-    }
-}
-```
 
 ## Autoload Singletons
 
@@ -159,10 +103,7 @@ Registered in **Project > Project Settings > Autoload**:
 ## Features
 
 ### Save System
-Characters implement a Savable interface via the `Character` base class:
-- `SavableId`: Unique identifier (auto-generated from scene path + node path)
-- `GatherSaveData()`: Collects position, health, death state
-- `ApplySaveData()`: Restores state on load
+Anything that implements `ISavable` will be saved via the `SaveManager`.
 
 ### Game State Management
 `GameManager` tracks game state (`Menu`, `Playing`, `Paused`, `Dialogue`, `Cutscene`) and provides:
@@ -177,7 +118,7 @@ Player includes:
 
 ## Getting Started
 
-1. Open the project in Godot 4.5+ with .NET support
+1. Open the project in Godot 4.6+ with .NET support
 2. Build the C# solution
 3. Run the main scene (`scenes/ui/menus/MainMenu.tscn`)
 

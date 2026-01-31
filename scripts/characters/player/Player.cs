@@ -18,41 +18,36 @@ public static class PlayerAnimation
 public partial class Player : FightingCharacter
 {
     // Drop-through
-    private const float DropThroughDuration = 0.25f;
+    public float MaxDropDistance { get; set; }
+    private float DropThroughDuration { get; set; }
+    private PhysicsBody2D _dropThroughPlatform;
+
+    // attack combo timer
+    public float ComboResetTime { get; set; }
+
+    protected override string[] AttackAnimations { get; set; } =
+        [PlayerAnimation.PunchCross, PlayerAnimation.PunchJab, PlayerAnimation.Punch];
 
     private int _comboIndex;
     private float _comboResetTimer;
 
     // Jump timing
+    public float CoyoteTime { get; set; }
+    public float JumpBufferTime { get; set; }
     private float _coyoteTimer;
-    private PhysicsBody2D _dropThroughPlatform;
     private float _dropThroughTimer;
-    private bool _isRunning;
     private float _jumpBufferTimer;
 
-    // Double-tap run
+    // running
+    public float RunSpeed { get; set; }
+    public float DoubleTapTime { get; set; }
+    private bool _isRunning;
     private float _lastLeftTapTime;
-
     private float _lastRightTapTime;
+
+    // crouching
+    public float CrouchSpeed { get; set; }
     private bool _isCrouching;
-
-    // Platformer physics
-    [Export] public float CoyoteTime { get; set; } = 0.12f;
-    [Export] public float JumpBufferTime { get; set; } = 0.12f;
-    [Export] public float MaxDropDistance { get; set; } = 100.0f;
-
-    // Running
-    [Export] public float RunSpeed { get; set; } = 200.0f;
-    [Export] public float DoubleTapTime { get; set; } = 0.25f;
-
-    // Crouching
-    [Export] public float CrouchSpeed { get; set; } = 50.0f;
-
-    // Combo system
-    [Export] public float ComboResetTime { get; set; } = 3.5f;
-
-    protected override string[] AttackAnimations =>
-        [PlayerAnimation.PunchCross, PlayerAnimation.PunchJab, PlayerAnimation.Punch];
 
     protected override void OnFightingCharacterInitialized()
     {
@@ -61,13 +56,21 @@ public partial class Player : FightingCharacter
         AttackDamage = 25;
         AttackRange = 60;
         CurrentHealth = MaxHealth;
+        MaxDropDistance = 100.0f;
+        DropThroughDuration = 0.25f;
+        ComboResetTime = 3.5f;
+        CoyoteTime = 0.12f;
+        JumpBufferTime = 0.12f;
+        RunSpeed = 200.0f;
+        DoubleTapTime = 0.25f;
+        CrouchSpeed = 50.0f;
         GameManager.Player = this;
         Load();
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (CurrentState == State.Dead) return;
+        if (CurrentState == FightingCharacterState.Dead) return;
 
         var velocity = Velocity;
         var onFloor = IsOnFloor();
@@ -103,7 +106,7 @@ public partial class Player : FightingCharacter
         else if (hasBufferedJump && canCoyoteJump && !_isCrouching)
         {
             velocity.Y = JumpVelocity;
-            CurrentState = State.Jumping;
+            CurrentState = FightingCharacterState.Jumping;
             _coyoteTimer = 0.0f;
             _jumpBufferTimer = 0.0f;
         }
@@ -119,7 +122,14 @@ public partial class Player : FightingCharacter
         }
 
         // Handle attack input
-        if (Input.IsActionJustPressed("attack") && CurrentState != State.Attacking && IsOnFloor()) Attack();
+        if (
+            Input.IsActionJustPressed("attack") &&
+            CurrentState != FightingCharacterState.Attacking &&
+            IsOnFloor()
+        )
+        {
+            Attack();
+        }
 
         // Horizontal movement (only left/right for side-scroller)
         var direction = Input.GetAxis("ui_left", "ui_right");
@@ -147,7 +157,7 @@ public partial class Player : FightingCharacter
             (_isRunning && Input.IsActionJustPressed("ui_right") && Velocity.X < 0))
             _isRunning = false;
 
-        if (CurrentState == State.Attacking)
+        if (CurrentState == FightingCharacterState.Attacking)
         {
             velocity.X = 0;
             _isRunning = false;
@@ -173,46 +183,45 @@ public partial class Player : FightingCharacter
         {
             if (Velocity.Y < 0)
             {
-                CurrentState = State.Jumping;
+                CurrentState = FightingCharacterState.Jumping;
                 Sprite.Play(PlayerAnimation.Jump);
             }
             else
             {
-                CurrentState = State.Falling;
+                CurrentState = FightingCharacterState.Falling;
                 Sprite.Play(PlayerAnimation.Jump);
             }
         }
-        else if (CurrentState == State.Attacking)
+        else if (CurrentState == FightingCharacterState.Attacking)
         {
         }
         else if (_isCrouching)
         {
-            CurrentState = direction != 0 ? State.Walking : State.Idle;
+            CurrentState = direction != 0 ? FightingCharacterState.Walking : FightingCharacterState.Idle;
             Sprite.Play(direction != 0 ? PlayerAnimation.CrouchWalk : PlayerAnimation.Crouch);
         }
         else if (direction != 0)
         {
-            CurrentState = _isRunning ? State.Running : State.Walking;
+            CurrentState = _isRunning ? FightingCharacterState.Running : FightingCharacterState.Walking;
             Sprite.Play(_isRunning ? PlayerAnimation.Run : PlayerAnimation.Walk);
         }
         else
         {
-            CurrentState = State.Idle;
+            CurrentState = FightingCharacterState.Idle;
             Sprite.Play(CommonCharacterAnimation.Idle);
         }
     }
 
-    protected override void Attack()
+    public override void Attack()
     {
         Velocity = Vector2.Zero;
-        CurrentState = State.Attacking;
+        CurrentState = FightingCharacterState.Attacking;
         Sprite.Play(AttackAnimations[_comboIndex]);
         if (AttackSfx != null) AudioManager.PlaySfx(AttackSfx);
     }
 
     protected override void OnHealthChanged()
     {
-        EventBus.EmitSignal(EventBus.SignalName.PlayerHealthChanged, CurrentHealth, MaxHealth);
     }
 
     protected override void OnDied()
@@ -238,7 +247,7 @@ public partial class Player : FightingCharacter
             if (enemy is not Node2D enemyNode) continue;
             var distance = GlobalPosition.DistanceTo(enemyNode.GlobalPosition);
             if (distance > AttackRange) continue;
-            if (enemy.HasMethod("TakeDamage")) enemy.Call("TakeDamage", AttackDamage);
+            if (enemy.HasMethod("TakeDamage")) enemy.Call("TakeDamage", AttackDamage, this);
         }
     }
 

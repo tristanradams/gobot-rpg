@@ -1,4 +1,5 @@
 using Godot;
+using RpgCSharp.scripts.characters.player;
 
 namespace RpgCSharp.scripts.autoload;
 
@@ -18,7 +19,7 @@ public partial class GameManager : Node
     public GameState CurrentState { get; private set; } = GameState.Menu;
     public GameState PreviousState { get; private set; } = GameState.Menu;
 
-    public Node2D Player { get; set; }
+    public Player Player { get; set; }
 
     public override void _Ready()
     {
